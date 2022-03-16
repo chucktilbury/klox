@@ -1,3 +1,6 @@
+bin/
+tmp/
+
 # Prerequisites
 *.d
 
