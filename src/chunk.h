@@ -1,5 +1,5 @@
-#ifndef clox_chunk_h
-#define clox_chunk_h
+#ifndef _chunk_h_
+#define _chunk_h_
 
 #include "common.h"
 #include "value.h"
@@ -54,9 +54,6 @@ typedef struct {
 
 void initChunk(Chunk* chunk);
 void freeChunk(Chunk* chunk);
-/* Chunks of Bytecode write-chunk-h < Chunks of Bytecode write-chunk-with-line-h
-void writeChunk(Chunk* chunk, uint8_t byte);
-*/
 void writeChunk(Chunk* chunk, uint8_t byte, int line);
 int addConstant(Chunk* chunk, Value value);
 

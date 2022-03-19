@@ -56,14 +56,11 @@ static inline Value numToValue(double num)
 
 typedef enum {
     VAL_BOOL,
-    VAL_NIL, // [user-types]
+    VAL_NIL,
     VAL_NUMBER,
     VAL_OBJ
 } ValueType;
 
-/* Chunks of Bytecode value-h < Types of Values value
-typedef double Value;
-*/
 typedef struct {
     ValueType type;
     union {

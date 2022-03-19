@@ -35,6 +35,7 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize)
     }
     return result;
 }
+
 void markObject(Obj* object)
 {
     if(object == NULL) {
@@ -64,18 +65,21 @@ void markObject(Obj* object)
 
     vm.grayStack[vm.grayCount++] = object;
 }
+
 void markValue(Value value)
 {
     if(IS_OBJ(value)) {
         markObject(AS_OBJ(value));
     }
 }
+
 static void markArray(ValueArray* array)
 {
     for(int i = 0; i < array->count; i++) {
         markValue(array->values[i]);
     }
 }
+
 static void blackenObject(Obj* object)
 {
 #ifdef DEBUG_LOG_GC
@@ -125,6 +129,7 @@ static void blackenObject(Obj* object)
             break;
     }
 }
+
 static void freeObject(Obj* object)
 {
 #ifdef DEBUG_LOG_GC
@@ -174,6 +179,7 @@ static void freeObject(Obj* object)
             break;
     }
 }
+
 static void markRoots()
 {
     for(Value* slot = vm.stack; slot < vm.stackTop; slot++) {
@@ -194,6 +200,7 @@ static void markRoots()
     markCompilerRoots();
     markObject((Obj*)vm.initString);
 }
+
 static void traceReferences()
 {
     while(vm.grayCount > 0) {
@@ -201,6 +208,7 @@ static void traceReferences()
         blackenObject(object);
     }
 }
+
 static void sweep()
 {
     Obj* previous = NULL;
@@ -225,6 +233,7 @@ static void sweep()
         }
     }
 }
+
 void collectGarbage()
 {
 #ifdef DEBUG_LOG_GC
@@ -246,6 +255,7 @@ void collectGarbage()
            vm.nextGC);
 #endif
 }
+
 void freeObjects()
 {
     Obj* object = vm.objects;

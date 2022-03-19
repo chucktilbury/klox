@@ -12,6 +12,7 @@ void initChunk(Chunk* chunk)
     chunk->lines = NULL;
     initValueArray(&chunk->constants);
 }
+
 void freeChunk(Chunk* chunk)
 {
     FREE_ARRAY(uint8_t, chunk->code, chunk->capacity);
@@ -19,9 +20,7 @@ void freeChunk(Chunk* chunk)
     freeValueArray(&chunk->constants);
     initChunk(chunk);
 }
-/* Chunks of Bytecode write-chunk < Chunks of Bytecode write-chunk-with-line
-void writeChunk(Chunk* chunk, uint8_t byte) {
-*/
+
 void writeChunk(Chunk* chunk, uint8_t byte, int line)
 {
     if(chunk->capacity < chunk->count + 1) {
@@ -37,6 +36,7 @@ void writeChunk(Chunk* chunk, uint8_t byte, int line)
     chunk->lines[chunk->count] = line;
     chunk->count++;
 }
+
 int addConstant(Chunk* chunk, Value value)
 {
     push(value);

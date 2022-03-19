@@ -2,25 +2,60 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <readline/readline.h>
+#include <readline/history.h>
+
 #include "common.h"
 #include "chunk.h"
 #include "debug.h"
 #include "vm.h"
 
+static void printHelp()
+{
+    printf("Command help:\n");
+    printf("  .q(uit) to quit program.\n");
+    printf("  .h(elp) print this information.\n");
+}
+
 static void repl()
 {
-    char line[1024];
-    for(;;) {
-        printf("> ");
+    char* line = NULL;
+    bool quit = false;
 
-        if(!fgets(line, sizeof(line), stdin)) {
-            printf("\n");
-            break;
+    printf("klox REPL. Type '.h(elp)) for a list of commands.\n");
+    while(!quit) {
+        if(line != NULL)
+            free(line);
+
+        line = readline("klox > ");
+
+        if(line != NULL) {
+            if(line[0] != '\0') {
+                if(line[0] == '.') {
+                    switch(toupper(line[1])) {
+                        case 'Q':
+                            quit = true;
+                            break;
+                        case 'H':
+                        case '\0':
+                            printHelp();
+                            break;
+                        default:
+                            printf("unknown REPL command\n");
+
+                    }
+                }
+                else {
+                    interpret(line);
+                }
+            }
         }
-
-        interpret(line);
+        else {
+            interpret(line);
+        }
     }
 }
+
 static char* readFile(const char* path)
 {
     FILE* file = fopen(path, "rb");
@@ -50,6 +85,7 @@ static char* readFile(const char* path)
     fclose(file);
     return buffer;
 }
+
 static void runFile(const char* path)
 {
     char* source = readFile(path);
@@ -68,54 +104,6 @@ int main(int argc, const char* argv[])
 {
     initVM();
 
-    /* Chunks of Bytecode main-chunk < Scanning on Demand args
-      Chunk chunk;
-      initChunk(&chunk);
-    */
-    /* Chunks of Bytecode main-constant < Scanning on Demand args
-
-      int constant = addConstant(&chunk, 1.2);
-    */
-    /* Chunks of Bytecode main-constant < Chunks of Bytecode main-chunk-line
-      writeChunk(&chunk, OP_CONSTANT);
-      writeChunk(&chunk, constant);
-
-    */
-    /* Chunks of Bytecode main-chunk-line < Scanning on Demand args
-      writeChunk(&chunk, OP_CONSTANT, 123);
-      writeChunk(&chunk, constant, 123);
-    */
-    /* A Virtual Machine main-chunk < Scanning on Demand args
-
-      constant = addConstant(&chunk, 3.4);
-      writeChunk(&chunk, OP_CONSTANT, 123);
-      writeChunk(&chunk, constant, 123);
-
-      writeChunk(&chunk, OP_ADD, 123);
-
-      constant = addConstant(&chunk, 5.6);
-      writeChunk(&chunk, OP_CONSTANT, 123);
-      writeChunk(&chunk, constant, 123);
-
-      writeChunk(&chunk, OP_DIVIDE, 123);
-    */
-    /* A Virtual Machine main-negate < Scanning on Demand args
-      writeChunk(&chunk, OP_NEGATE, 123);
-    */
-    /* Chunks of Bytecode main-chunk < Chunks of Bytecode main-chunk-line
-      writeChunk(&chunk, OP_RETURN);
-    */
-    /* Chunks of Bytecode main-chunk-line < Scanning on Demand args
-
-      writeChunk(&chunk, OP_RETURN, 123);
-    */
-    /* Chunks of Bytecode main-disassemble-chunk < Scanning on Demand args
-
-      disassembleChunk(&chunk, "test chunk");
-    */
-    /* A Virtual Machine main-interpret < Scanning on Demand args
-      interpret(&chunk);
-    */
     if(argc == 1) {
         repl();
     }
@@ -129,11 +117,6 @@ int main(int argc, const char* argv[])
         }
 
     freeVM();
-    /* A Virtual Machine main-free-vm < Scanning on Demand args
-      freeVM();
-    */
-    /* Chunks of Bytecode main-chunk < Scanning on Demand args
-      freeChunk(&chunk);
-    */
+
     return 0;
 }

@@ -14,29 +14,22 @@ void initTable(Table* table)
     table->capacity = 0;
     table->entries = NULL;
 }
+
 void freeTable(Table* table)
 {
     FREE_ARRAY(Entry, table->entries, table->capacity);
     initTable(table);
 }
+
 // NOTE: The "Optimization" chapter has a manual copy of this function.
 // If you change it here, make sure to update that copy.
-static Entry* findEntry(Entry* entries, int capacity,
-                        ObjString* key)
+static Entry* findEntry(Entry* entries, int capacity, ObjString* key)
 {
-    /* Hash Tables find-entry < Optimization initial-index
-      uint32_t index = key->hash % capacity;
-    */
     uint32_t index = key->hash & (capacity - 1);
     Entry* tombstone = NULL;
 
     for(;;) {
         Entry* entry = &entries[index];
-        /* Hash Tables find-entry < Hash Tables find-tombstone
-            if (entry->key == key || entry->key == NULL) {
-              return entry;
-            }
-        */
         if(entry->key == NULL) {
             if(IS_NIL(entry->value)) {
                 // Empty entry.
@@ -55,12 +48,10 @@ static Entry* findEntry(Entry* entries, int capacity,
                 return entry;
             }
 
-        /* Hash Tables find-entry < Optimization next-index
-            index = (index + 1) % capacity;
-        */
         index = (index + 1) & (capacity - 1);
     }
 }
+
 bool tableGet(Table* table, ObjString* key, Value* value)
 {
     if(table->count == 0) {
@@ -75,6 +66,7 @@ bool tableGet(Table* table, ObjString* key, Value* value)
     *value = entry->value;
     return true;
 }
+
 static void adjustCapacity(Table* table, int capacity)
 {
     Entry* entries = ALLOCATE(Entry, capacity);
@@ -100,6 +92,7 @@ static void adjustCapacity(Table* table, int capacity)
     table->entries = entries;
     table->capacity = capacity;
 }
+
 bool tableSet(Table* table, ObjString* key, Value value)
 {
     if(table->count + 1 > table->capacity * TABLE_MAX_LOAD) {
@@ -120,6 +113,7 @@ bool tableSet(Table* table, ObjString* key, Value value)
     entry->value = value;
     return isNewKey;
 }
+
 bool tableDelete(Table* table, ObjString* key)
 {
     if(table->count == 0) {
@@ -137,6 +131,7 @@ bool tableDelete(Table* table, ObjString* key)
     entry->value = BOOL_VAL(true);
     return true;
 }
+
 void tableAddAll(Table* from, Table* to)
 {
     for(int i = 0; i < from->capacity; i++) {
@@ -146,6 +141,7 @@ void tableAddAll(Table* from, Table* to)
         }
     }
 }
+
 ObjString* tableFindString(Table* table, const char* chars,
                            int length, uint32_t hash)
 {
@@ -153,9 +149,6 @@ ObjString* tableFindString(Table* table, const char* chars,
         return NULL;
     }
 
-    /* Hash Tables table-find-string < Optimization find-string-index
-      uint32_t index = hash % table->capacity;
-    */
     uint32_t index = hash & (table->capacity - 1);
     for(;;) {
         Entry* entry = &table->entries[index];
@@ -173,12 +166,10 @@ ObjString* tableFindString(Table* table, const char* chars,
                 return entry->key;
             }
 
-        /* Hash Tables table-find-string < Optimization find-string-next
-            index = (index + 1) % table->capacity;
-        */
         index = (index + 1) & (table->capacity - 1);
     }
 }
+
 void tableRemoveWhite(Table* table)
 {
     for(int i = 0; i < table->capacity; i++) {
@@ -188,6 +179,7 @@ void tableRemoveWhite(Table* table)
         }
     }
 }
+
 void markTable(Table* table)
 {
     for(int i = 0; i < table->capacity; i++) {

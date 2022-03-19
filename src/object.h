@@ -1,5 +1,5 @@
-#ifndef clox_object_h
-#define clox_object_h
+#ifndef _object_h_
+#define _object_h_
 
 #include "common.h"
 #include "chunk.h"
@@ -22,8 +22,7 @@
 #define AS_CLOSURE(value)      ((ObjClosure*)AS_OBJ(value))
 #define AS_FUNCTION(value)     ((ObjFunction*)AS_OBJ(value))
 #define AS_INSTANCE(value)     ((ObjInstance*)AS_OBJ(value))
-#define AS_NATIVE(value) \
-    (((ObjNative*)AS_OBJ(value))->function)
+#define AS_NATIVE(value)       (((ObjNative*)AS_OBJ(value))->function)
 #define AS_STRING(value)       ((ObjString*)AS_OBJ(value))
 #define AS_CSTRING(value)      (((ObjString*)AS_OBJ(value))->chars)
 
@@ -69,6 +68,7 @@ typedef struct ObjUpvalue {
     Value closed;
     struct ObjUpvalue* next;
 } ObjUpvalue;
+
 typedef struct {
     Obj obj;
     ObjFunction* function;
@@ -94,8 +94,7 @@ typedef struct {
     ObjClosure* method;
 } ObjBoundMethod;
 
-ObjBoundMethod* newBoundMethod(Value receiver,
-                               ObjClosure* method);
+ObjBoundMethod* newBoundMethod(Value receiver, ObjClosure* method);
 ObjClass* newClass(ObjString* name);
 ObjClosure* newClosure(ObjFunction* function);
 ObjFunction* newFunction();

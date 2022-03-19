@@ -12,8 +12,8 @@ void disassembleChunk(Chunk* chunk, const char* name)
         offset = disassembleInstruction(chunk, offset);
     }
 }
-static int constantInstruction(const char* name, Chunk* chunk,
-                               int offset)
+
+static int constantInstruction(const char* name, Chunk* chunk, int offset)
 {
     uint8_t constant = chunk->code[offset + 1];
     printf("%-16s %4d '", name, constant);
@@ -21,8 +21,8 @@ static int constantInstruction(const char* name, Chunk* chunk,
     printf("'\n");
     return offset + 2;
 }
-static int invokeInstruction(const char* name, Chunk* chunk,
-                             int offset)
+
+static int invokeInstruction(const char* name, Chunk* chunk, int offset)
 {
     uint8_t constant = chunk->code[offset + 1];
     uint8_t argCount = chunk->code[offset + 2];
@@ -31,11 +31,13 @@ static int invokeInstruction(const char* name, Chunk* chunk,
     printf("'\n");
     return offset + 3;
 }
+
 static int simpleInstruction(const char* name, int offset)
 {
     printf("%s\n", name);
     return offset + 1;
 }
+
 static int byteInstruction(const char* name, Chunk* chunk,
                            int offset)
 {
@@ -43,8 +45,8 @@ static int byteInstruction(const char* name, Chunk* chunk,
     printf("%-16s %4d\n", name, slot);
     return offset + 2; // [debug]
 }
-static int jumpInstruction(const char* name, int sign,
-                           Chunk* chunk, int offset)
+
+static int jumpInstruction(const char* name, int sign, Chunk* chunk, int offset)
 {
     uint16_t jump = (uint16_t)(chunk->code[offset + 1] << 8);
     jump |= chunk->code[offset + 2];
@@ -52,6 +54,7 @@ static int jumpInstruction(const char* name, int sign,
            offset + 3 + sign * jump);
     return offset + 3;
 }
+
 int disassembleInstruction(Chunk* chunk, int offset)
 {
     printf("%04d ", offset);
@@ -82,8 +85,7 @@ int disassembleInstruction(Chunk* chunk, int offset)
         case OP_GET_GLOBAL:
             return constantInstruction("OP_GET_GLOBAL", chunk, offset);
         case OP_DEFINE_GLOBAL:
-            return constantInstruction("OP_DEFINE_GLOBAL", chunk,
-                                       offset);
+            return constantInstruction("OP_DEFINE_GLOBAL", chunk, offset);
         case OP_SET_GLOBAL:
             return constantInstruction("OP_SET_GLOBAL", chunk, offset);
         case OP_GET_UPVALUE:
@@ -135,8 +137,7 @@ int disassembleInstruction(Chunk* chunk, int offset)
                 printValue(chunk->constants.values[constant]);
                 printf("\n");
 
-                ObjFunction* function = AS_FUNCTION(
-                                                chunk->constants.values[constant]);
+                ObjFunction* function = AS_FUNCTION(chunk->constants.values[constant]);
                 for(int j = 0; j < function->upvalueCount; j++) {
                     int isLocal = chunk->code[offset++];
                     int index = chunk->code[offset++];

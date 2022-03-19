@@ -23,6 +23,10 @@ Actual questions
 ----------------
 Changes planned
 ---------------
+* Chapter 24 challenge #1, make IP more efficient. (challenge code)
+    This challenge did not "work" from the literal instructions. I backed out
+    the change and will look into it later.
+
 * Add instructions for !=, <=, and >=
 * Add signed and unsigned integer types to the interpreter. Also implement the
   promotion rules.
@@ -89,14 +93,18 @@ Changes planned
 
 * Support multi-line comments
 
+* Line numbers in the chunk data structure. (ch 14 #1)
+
+* Make it possible to execute lox code from lox code.
+
+* Implement "inline assembly" for the VM.
+
 ------------------------------------
 Changes actually implemented
 --------------------------------------
 
-* Chapter 24 challenge #1, make IP more efficient.
 * Fixed table wrap around to use bitwise operations.
 * Fix the REPL with a proper readline implementation.
-* Line numbers in the chunk data structure. (ch 14 #1)
 
 ----------------------------------
 Steps to add an object type
