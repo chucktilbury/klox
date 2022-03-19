@@ -16,9 +16,15 @@ OBJS	=	main.o \
 DPRINT	=	-DDEBUG_PRINT_CODE
 #GPRINT	=	-DDEBUG_STRESS_GC
 #GLOG	=	-DDEBUG_LOG_GC
-DEBUG	=	-g3
+DEBUG	=	-g3 -Og
 #OPTO	=	-O3
-PARAMS	=	-Wall -Wextra $(GPRINT) $(GLOG) $(DTRACE) $(DPRINT) $(OPTO) $(DEBUG)
+PARAMS	=	-Wall -Wextra -std=c99 \
+			$(GPRINT) \
+			$(GLOG) \
+			$(DTRACE) \
+			$(DPRINT) \
+			$(OPTO) \
+			$(DEBUG)
 LIBS	=	-lreadline
 
 all: $(TARGET)

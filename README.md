@@ -4,14 +4,14 @@ You can find his blog here: http://journal.stuffwithstuff.com/
 You can find his book here: https://craftinginterpreters.com/
 
 ## The Plan
-1. Do most of the modifications listed below. 
-2. Choose a GUI framework to bind to the result. 
+1. Do most of the modifications listed below.
+2. Choose a GUI framework to bind to the result.
 3. Build a GUI source level debugger.
-4. Complete a simple IDE base on the debugger. 
+4. Complete a simple IDE base on the debugger.
 5. Go nuts (if I haven't already).
 
-## Random Notes 
-I made these notes while I was going through the book and copying the source code. They may or may not make sense. I am in the very early stages of getting things up and running. The idea is to build a stable and fast language that I would actually like to use. One that is adapted to my preferences, rather than adapting my preferences to the tools at hand. I am mostly interested in writing GUI based stuff right now, so that's where this is heading. 
+## Random Notes
+I made these notes while I was going through the book and copying the source code. They may or may not make sense. I am in the very early stages of getting things up and running. The idea is to build a stable and fast language that I would actually like to use. One that is adapted to my preferences, rather than adapting my preferences to the tools at hand. I am mostly interested in writing GUI based stuff right now, so that's where this is heading.
 
 --------------------
 Actual questions
@@ -23,13 +23,11 @@ Actual questions
 ----------------
 Changes planned
 ---------------
-* Line numbers in the chunk data structure. (ch 14 #1)
 * Add instructions for !=, <=, and >=
 * Add signed and unsigned integer types to the interpreter. Also implement the
   promotion rules.
 * do the "challenges" for chapter 19
 * Chapter 21 challenges
-* Fix the REPL with a proper readline implementation.
 * Chapter 22: Fix This: The next step is figuring out how the compiler
     gets at this state. If we were principled engineers, we’d give each
     function in the front end a parameter that accepts a pointer to a
@@ -87,11 +85,18 @@ Changes planned
 * Change the less token to a colon in classDeclaration(). Support it in the
   scanner.
 
+* Need an import system so that source is not limited to one file.
+
+* Support multi-line comments
+
 ------------------------------------
 Changes actually implemented
 --------------------------------------
 
 * Chapter 24 challenge #1, make IP more efficient.
+* Fixed table wrap around to use bitwise operations.
+* Fix the REPL with a proper readline implementation.
+* Line numbers in the chunk data structure. (ch 14 #1)
 
 ----------------------------------
 Steps to add an object type
