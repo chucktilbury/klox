@@ -154,7 +154,8 @@ static bool callValue(Value callee, int argCount)
     return false;
 }
 
-static bool invokeFromClass(ObjClass* klass, ObjString* name, int argCount)
+static bool invokeFromClass(ObjClass* klass,
+                            ObjString* name, int argCount)
 {
     Value method;
     if(!tableGet(&klass->methods, name, &method)) {
@@ -228,7 +229,7 @@ static ObjUpvalue* captureUpvalue(Value* local)
 static void closeUpvalues(Value* last)
 {
     while(vm.openUpvalues != NULL &&
-          vm.openUpvalues->location >= last) {
+            vm.openUpvalues->location >= last) {
         ObjUpvalue* upvalue = vm.openUpvalues;
         upvalue->closed = *upvalue->location;
         upvalue->location = &upvalue->closed;

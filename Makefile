@@ -82,12 +82,15 @@ clean-docs:
 	-$(RM) -r $(DOCOUTDIR)
 
 $(DOCTARG): $(SRCS) $(HEADERS)
-	cd docs; doxygen doxygen.cfg
+	cd docs; \
+	doxygen doxygen.cfg
 
 docs: $(DOCTARG)
 
 read: docs
 	firefox $(DOCTARG)
 
-format:
-	cd src; astyle --options=astyle.rc $(SRCS) $(HEADERS); mv *.bak ../obj
+format: $(SRCDIR)/astyle.rc $(SRCS) $(HEADERS)
+	cd src; \
+	astyle -v --options=astyle.rc $(SRCS) $(HEADERS); \
+	mv -vf *.bak ../obj || true

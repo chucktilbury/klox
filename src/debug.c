@@ -39,7 +39,8 @@ void disassembleChunk(Chunk* chunk, const char* name)
  * @return int - new offset into the array of instructions
  *
  */
-static int constantInstruction(const char* name, Chunk* chunk, int offset)
+static int constantInstruction(const char* name,
+                               Chunk* chunk, int offset)
 {
     uint8_t constant = chunk->code[offset + 1];
     printf("%-16s %4d '", name, constant);
@@ -58,7 +59,8 @@ static int constantInstruction(const char* name, Chunk* chunk, int offset)
  * @return int - new offset into the instruction array
  *
  */
-static int invokeInstruction(const char* name, Chunk* chunk, int offset)
+static int invokeInstruction(const char* name, Chunk* chunk,
+                             int offset)
 {
     uint8_t constant = chunk->code[offset + 1];
     uint8_t argCount = chunk->code[offset + 2];
@@ -92,7 +94,8 @@ static int simpleInstruction(const char* name, int offset)
  * @return int - new offset into the instruction array
  *
  */
-static int byteInstruction(const char* name, Chunk* chunk, int offset)
+static int byteInstruction(const char* name, Chunk* chunk,
+                           int offset)
 {
     uint8_t slot = chunk->code[offset + 1];
     printf("%-16s %4d\n", name, slot);
@@ -110,7 +113,8 @@ static int byteInstruction(const char* name, Chunk* chunk, int offset)
  * @return int - new offset into the instruction array
  *
  */
-static int jumpInstruction(const char* name, int sign, Chunk* chunk, int offset)
+static int jumpInstruction(const char* name, int sign,
+                           Chunk* chunk, int offset)
 {
     uint16_t jump = (uint16_t)(chunk->code[offset + 1] << 8);
     jump |= chunk->code[offset + 2];
@@ -131,7 +135,7 @@ int disassembleInstruction(Chunk* chunk, int offset)
 {
     printf("%04d ", offset);
     if(offset > 0 &&
-       chunk->lines[offset] == chunk->lines[offset - 1]) {
+            chunk->lines[offset] == chunk->lines[offset - 1]) {
         printf("   | ");
     }
     else {
@@ -157,7 +161,8 @@ int disassembleInstruction(Chunk* chunk, int offset)
         case OP_GET_GLOBAL:
             return constantInstruction("OP_GET_GLOBAL", chunk, offset);
         case OP_DEFINE_GLOBAL:
-            return constantInstruction("OP_DEFINE_GLOBAL", chunk, offset);
+            return constantInstruction("OP_DEFINE_GLOBAL", chunk,
+                                       offset);
         case OP_SET_GLOBAL:
             return constantInstruction("OP_SET_GLOBAL", chunk, offset);
         case OP_GET_UPVALUE:
@@ -165,9 +170,11 @@ int disassembleInstruction(Chunk* chunk, int offset)
         case OP_SET_UPVALUE:
             return byteInstruction("OP_SET_UPVALUE", chunk, offset);
         case OP_GET_PROPERTY:
-            return constantInstruction("OP_GET_PROPERTY", chunk, offset);
+            return constantInstruction("OP_GET_PROPERTY", chunk,
+                                       offset);
         case OP_SET_PROPERTY:
-            return constantInstruction("OP_SET_PROPERTY", chunk, offset);
+            return constantInstruction("OP_SET_PROPERTY", chunk,
+                                       offset);
         case OP_GET_SUPER:
             return constantInstruction("OP_GET_SUPER", chunk, offset);
         case OP_EQUAL:
@@ -193,7 +200,8 @@ int disassembleInstruction(Chunk* chunk, int offset)
         case OP_JUMP:
             return jumpInstruction("OP_JUMP", 1, chunk, offset);
         case OP_JUMP_IF_FALSE:
-            return jumpInstruction("OP_JUMP_IF_FALSE", 1, chunk, offset);
+            return jumpInstruction("OP_JUMP_IF_FALSE", 1, chunk,
+                                   offset);
         case OP_LOOP:
             return jumpInstruction("OP_LOOP", -1, chunk, offset);
         case OP_CALL:
@@ -209,7 +217,8 @@ int disassembleInstruction(Chunk* chunk, int offset)
                 printValue(chunk->constants.values[constant]);
                 printf("\n");
 
-                ObjFunction* function = AS_FUNCTION(chunk->constants.values[constant]);
+                ObjFunction* function = AS_FUNCTION(
+                                                chunk->constants.values[constant]);
                 for(int j = 0; j < function->upvalueCount; j++) {
                     int isLocal = chunk->code[offset++];
                     int index = chunk->code[offset++];

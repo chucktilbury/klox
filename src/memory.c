@@ -31,7 +31,8 @@
  * @return void* - pointer to the allocated memory
  *
  */
-void* reallocate(void* pointer, size_t oldSize, size_t newSize)
+void* reallocate(void* pointer, size_t oldSize,
+                 size_t newSize)
 {
     vm.bytesAllocated += newSize - oldSize;
     if(newSize > oldSize) {
@@ -247,8 +248,8 @@ static void markRoots()
     }
 
     for(ObjUpvalue* upvalue = vm.openUpvalues;
-        upvalue != NULL;
-        upvalue = upvalue->next) {
+            upvalue != NULL;
+            upvalue = upvalue->next) {
         markObject((Obj*)upvalue);
     }
 

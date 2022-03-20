@@ -42,7 +42,8 @@ static Obj* allocateObject(size_t size, ObjType type)
     vm.objects = object;
 
 #ifdef DEBUG_LOG_GC
-    printf("%p allocate %zu for %d\n", (void*)object, size, type);
+    printf("%p allocate %zu for %d\n", (void*)object, size,
+           type);
 #endif
 
     return object;
@@ -56,7 +57,8 @@ static Obj* allocateObject(size_t size, ObjType type)
  * @return ObjBoundMethod* - pointer to the object.
  *
  */
-ObjBoundMethod* newBoundMethod(Value receiver, ObjClosure* method)
+ObjBoundMethod* newBoundMethod(Value receiver,
+                               ObjClosure* method)
 {
     ObjBoundMethod* bound = ALLOCATE_OBJ(ObjBoundMethod,
                                          OBJ_BOUND_METHOD);
@@ -202,8 +204,7 @@ static uint32_t hashString(const char* key, int length)
 ObjString* takeString(char* chars, int length)
 {
     uint32_t hash = hashString(chars, length);
-    ObjString* interned = tableFindString(&vm.strings, chars, length,
-                                          hash);
+    ObjString* interned = tableFindString(&vm.strings, chars, length, hash);
     if(interned != NULL) {
         FREE_ARRAY(char, chars, length + 1);
         return interned;
@@ -223,8 +224,7 @@ ObjString* takeString(char* chars, int length)
 ObjString* copyString(const char* chars, int length)
 {
     uint32_t hash = hashString(chars, length);
-    ObjString* interned = tableFindString(&vm.strings, chars, length,
-                                          hash);
+    ObjString* interned = tableFindString(&vm.strings, chars, length, hash);
     if(interned != NULL) {
         return interned;
     }

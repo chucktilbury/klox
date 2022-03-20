@@ -21,7 +21,8 @@
  * @param function - pointer to the handler
  *
  */
-static void defineNative(const char* name, NativeFn function)
+static void defineNative(const char* name,
+                         NativeFn function)
 {
     push(OBJ_VAL(copyString(name, (int)strlen(name))));
     push(OBJ_VAL(newNative(function)));

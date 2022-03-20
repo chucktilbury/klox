@@ -23,7 +23,8 @@ void freeTable(Table* table)
 
 // NOTE: The "Optimization" chapter has a manual copy of this function.
 // If you change it here, make sure to update that copy.
-static Entry* findEntry(Entry* entries, int capacity, ObjString* key)
+static Entry* findEntry(Entry* entries, int capacity,
+                        ObjString* key)
 {
     uint32_t index = key->hash & (capacity - 1);
     Entry* tombstone = NULL;
@@ -57,7 +58,8 @@ bool tableGet(Table* table, ObjString* key, Value* value)
         return false;
     }
 
-    Entry* entry = findEntry(table->entries, table->capacity, key);
+    Entry* entry = findEntry(table->entries, table->capacity,
+                             key);
     if(entry->key == NULL) {
         return false;
     }
@@ -99,7 +101,8 @@ bool tableSet(Table* table, ObjString* key, Value value)
         adjustCapacity(table, capacity);
     }
 
-    Entry* entry = findEntry(table->entries, table->capacity, key);
+    Entry* entry = findEntry(table->entries, table->capacity,
+                             key);
     bool isNewKey = entry->key == NULL;
     /* Hash Tables table-set < Hash Tables set-increment-count
       if (isNewKey) table->count++;
@@ -120,7 +123,8 @@ bool tableDelete(Table* table, ObjString* key)
     }
 
     // Find the entry.
-    Entry* entry = findEntry(table->entries, table->capacity, key);
+    Entry* entry = findEntry(table->entries, table->capacity,
+                             key);
     if(entry->key == NULL) {
         return false;
     }

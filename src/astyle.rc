@@ -10,6 +10,8 @@ formatted
 #quiet
 
 indent=spaces=4
+max-code-length=120
+break-after-logical
 
 attach-namespaces
 attach-classes
@@ -29,9 +31,9 @@ indent-preproc-block
 indent-preproc-define
 indent-col1-comments
 
-min-conditional-indent=0
-max-continuation-indent=40
-max-instatement-indent=120
+#min-conditional-indent=0
+#max-continuation-indent=40
+#max-instatement-indent=120
 
 #break-blocks
 #break-blocks=all
@@ -64,7 +66,4 @@ attach-return-type-decl
 convert-tabs
 #close-templates
 #remove-comment-prefix
-
-max-code-length=120
-break-after-logical
 

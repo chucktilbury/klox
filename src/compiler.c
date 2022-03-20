@@ -226,7 +226,8 @@ static void patchJump(int offset)
     currentChunk()->code[offset + 1] = jump & 0xff;
 }
 
-static void initCompiler(Compiler* compiler, FunctionType type)
+static void initCompiler(Compiler* compiler,
+                         FunctionType type)
 {
     compiler->enclosing = current;
     compiler->function = NULL;
@@ -280,8 +281,8 @@ static void endScope()
     current->scopeDepth--;
 
     while(current->localCount > 0 &&
-          current->locals[current->localCount - 1].depth >
-          current->scopeDepth) {
+            current->locals[current->localCount - 1].depth >
+            current->scopeDepth) {
 
         if(current->locals[current->localCount - 1].isCaptured) {
             emitByte(OP_CLOSE_UPVALUE);
@@ -392,7 +393,8 @@ static void declareVariable()
     Token* name = &parser.previous;
     for(int i = current->localCount - 1; i >= 0; i--) {
         Local* local = &current->locals[i];
-        if(local->depth != -1 && local->depth < current->scopeDepth) {
+        if(local->depth != -1 &&
+                local->depth < current->scopeDepth) {
             break;
         }
 
@@ -519,7 +521,8 @@ static void call(bool canAssign)
 
 static void dot(bool canAssign)
 {
-    consume(TOKEN_IDENTIFIER, "Expect property name after '.'.");
+    consume(TOKEN_IDENTIFIER,
+            "Expect property name after '.'.");
     uint8_t name = identifierConstant(&parser.previous);
 
     if(canAssign && match(TOKEN_EQUAL)) {
@@ -752,7 +755,8 @@ static void parsePrecedence(Precedence precedence)
     bool canAssign = precedence <= PREC_ASSIGNMENT;
     prefixRule(canAssign);
 
-    while(precedence <= getRule(parser.current.type)->precedence) {
+    while(precedence <= getRule(
+                    parser.current.type)->precedence) {
         advance();
         ParseFn infixRule = getRule(parser.previous.type)->infix;
         infixRule(canAssign);
@@ -790,7 +794,8 @@ static void function(FunctionType type)
     initCompiler(&compiler, type);
     beginScope();
 
-    consume(TOKEN_LEFT_PAREN, "Expect '(' after function name.");
+    consume(TOKEN_LEFT_PAREN,
+            "Expect '(' after function name.");
     if(!check(TOKEN_RIGHT_PAREN)) {
         do {
             current->function->arity++;
@@ -802,7 +807,8 @@ static void function(FunctionType type)
         } while(match(TOKEN_COMMA));
     }
     consume(TOKEN_RIGHT_PAREN, "Expect ')' after parameters.");
-    consume(TOKEN_LEFT_BRACE, "Expect '{' before function body.");
+    consume(TOKEN_LEFT_BRACE,
+            "Expect '{' before function body.");
     block();
 
     ObjFunction* function = endCompiler();
@@ -822,7 +828,7 @@ static void method()
 
     FunctionType type = TYPE_METHOD;
     if(parser.previous.length == 4 &&
-       memcmp(parser.previous.start, "init", 4) == 0) {
+            memcmp(parser.previous.start, "init", 4) == 0) {
         type = TYPE_INITIALIZER;
     }
 
@@ -926,7 +932,8 @@ static void forStatement()
     int exitJump = -1;
     if(!match(TOKEN_SEMICOLON)) {
         expression();
-        consume(TOKEN_SEMICOLON, "Expect ';' after loop condition.");
+        consume(TOKEN_SEMICOLON,
+                "Expect ';' after loop condition.");
 
         // Jump out of the loop if the condition is false.
         exitJump = emitJump(OP_JUMP_IF_FALSE);
@@ -960,7 +967,8 @@ static void ifStatement()
 {
     consume(TOKEN_LEFT_PAREN, "Expect '(' after 'if'.");
     expression();
-    consume(TOKEN_RIGHT_PAREN, "Expect ')' after condition."); // [paren]
+    consume(TOKEN_RIGHT_PAREN,
+            "Expect ')' after condition."); // [paren]
 
     int thenJump = emitJump(OP_JUMP_IF_FALSE);
     emitByte(OP_POP);
