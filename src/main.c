@@ -1,3 +1,11 @@
+/**
+ * @file main.c
+ * @brief Main entry point to the program.
+ *
+ * @version 0.1
+ * @date 2022-03-19
+ *
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,6 +18,11 @@
 #include "debug.h"
 #include "vm.h"
 
+/**
+ * @brief Print simple help text for the REPL functionality. This is mostly
+ * a stub for when there are debugging commands implemented.
+ *
+ */
 static void printHelp()
 {
     printf("Command help:\n");
@@ -17,6 +30,11 @@ static void printHelp()
     printf("  .h(elp) print this information.\n");
 }
 
+/**
+ * @brief Accept random correct code and submit it to the interpreter for
+ * execution.
+ *
+ */
 static void repl()
 {
     char* line = NULL;
@@ -56,6 +74,15 @@ static void repl()
     }
 }
 
+
+/**
+ * @brief Read a file that was specified on the command line and prepare it
+ * to be compiled and interpreted.
+ *
+ * @param path - fully qualified file name
+ * @return char* - pointer to the raw text of the file
+ *
+ */
 static char* readFile(const char* path)
 {
     FILE* file = fopen(path, "rb");
@@ -86,6 +113,13 @@ static char* readFile(const char* path)
     return buffer;
 }
 
+/**
+ * @brief Read the file from disk and submit it to the compiler for
+ * processing.
+ *
+ * @param path - fully qualified file name
+ *
+ */
 static void runFile(const char* path)
 {
     char* source = readFile(path);
@@ -100,6 +134,14 @@ static void runFile(const char* path)
     }
 }
 
+/**
+ * @brief Main entry point to the program.
+ *
+ * @param argc - number of command line arguments, set by runtime system of host
+ * @param argv - array of strings for command arguments set by system
+ * @return int - return 0 if no error
+ *
+ */
 int main(int argc, const char* argv[])
 {
     initVM();
@@ -112,7 +154,7 @@ int main(int argc, const char* argv[])
             runFile(argv[1]);
         }
         else {
-            fprintf(stderr, "Usage: clox [path]\n");
+            fprintf(stderr, "Usage: klox [path]\n");
             exit(64);
         }
 

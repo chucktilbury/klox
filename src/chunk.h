@@ -1,9 +1,21 @@
+/**
+ * @file chunk.h
+ * @brief Define the instruction set for the VM and prototype the functions for
+ * reading and writing the chuck data structure.
+ *
+ * @version 0.1
+ * @date 2022-03-19
+ *
+ */
 #ifndef _chunk_h_
 #define _chunk_h_
 
 #include "common.h"
 #include "value.h"
 
+/**
+ * @brief Virtual machine instruction set.
+ */
 typedef enum {
     OP_CONSTANT,
     OP_NIL,
@@ -44,6 +56,10 @@ typedef enum {
     OP_METHOD
 } OpCode;
 
+/**
+ * @brief Chunk data structure is written by the compiler and read by the
+ * virtual machine.
+ */
 typedef struct {
     int count;
     int capacity;

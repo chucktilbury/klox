@@ -1,3 +1,11 @@
+/**
+ * @file memory.c
+ * @brief Memory manager for the language. Includes the garbage collector.
+ *
+ * @version 0.1
+ * @date 2022-03-19
+ *
+ */
 #include <stdlib.h>
 
 #include "compiler.h"
@@ -11,6 +19,18 @@
 
 #define GC_HEAP_GROW_FACTOR 2
 
+/**
+ * @brief Main memory allocation and free point in the system. Main support
+ * for garbage collection. If the memory allocation fails, then this function
+ * aborts the program. This function performs all memory allocation and free
+ * operations.
+ *
+ * @param pointer - pointer to reallocate. Null creates a new pointer.
+ * @param oldSize - used when downsizing a memory allocation
+ * @param newSize - size of the new allocation
+ * @return void* - pointer to the allocated memory
+ *
+ */
 void* reallocate(void* pointer, size_t oldSize, size_t newSize)
 {
     vm.bytesAllocated += newSize - oldSize;
@@ -36,6 +56,12 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize)
     return result;
 }
 
+/**
+ * @brief Garbage collection. This function controls marking the object as gray.
+ *
+ * @param object - the object to mark
+ *
+ */
 void markObject(Obj* object)
 {
     if(object == NULL) {
@@ -66,6 +92,12 @@ void markObject(Obj* object)
     vm.grayStack[vm.grayCount++] = object;
 }
 
+/**
+ * @brief Mark a value-type object.
+ *
+ * @param value - the value to mark
+ *
+ */
 void markValue(Value value)
 {
     if(IS_OBJ(value)) {
@@ -73,6 +105,12 @@ void markValue(Value value)
     }
 }
 
+/**
+ * @brief Mark an array-typed object as gray.
+ *
+ * @param array - the object to mark
+ *
+ */
 static void markArray(ValueArray* array)
 {
     for(int i = 0; i < array->count; i++) {
@@ -80,6 +118,13 @@ static void markArray(ValueArray* array)
     }
 }
 
+/**
+ * @brief Mark an object as black, which means that it is in use and will not
+ * be deleted.
+ *
+ * @param object - the object to mark
+ *
+ */
 static void blackenObject(Obj* object)
 {
 #ifdef DEBUG_LOG_GC
@@ -130,6 +175,13 @@ static void blackenObject(Obj* object)
     }
 }
 
+/**
+ * @brief When the unreachable memory is reaped, then this is the function
+ * that is called.
+ *
+ * @param object - object to free
+ *
+ */
 static void freeObject(Obj* object)
 {
 #ifdef DEBUG_LOG_GC
@@ -180,6 +232,10 @@ static void freeObject(Obj* object)
     }
 }
 
+/**
+ * @brief Marking the roots of reachable objects.
+ *
+ */
 static void markRoots()
 {
     for(Value* slot = vm.stack; slot < vm.stackTop; slot++) {
@@ -201,6 +257,10 @@ static void markRoots()
     markObject((Obj*)vm.initString);
 }
 
+/**
+ * @brief Find all of the object references.
+ *
+ */
 static void traceReferences()
 {
     while(vm.grayCount > 0) {
@@ -209,6 +269,10 @@ static void traceReferences()
     }
 }
 
+/**
+ * @brief Free all unmarked objects.
+ *
+ */
 static void sweep()
 {
     Obj* previous = NULL;
@@ -234,6 +298,11 @@ static void sweep()
     }
 }
 
+/**
+ * @brief Main interface. This is called to initiate the garbage collection.
+ * This returns when all of the memory has been examined and kept or deleted.
+ *
+ */
 void collectGarbage()
 {
 #ifdef DEBUG_LOG_GC
@@ -256,6 +325,10 @@ void collectGarbage()
 #endif
 }
 
+/**
+ * @brief Free all of the objects at the end of the run.
+ *
+ */
 void freeObjects()
 {
     Obj* object = vm.objects;

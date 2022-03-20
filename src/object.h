@@ -1,3 +1,11 @@
+/**
+ * @file object.h
+ * @brief Declarations for objects
+ *
+ * @version 0.1
+ * @date 2022-03-19
+ *
+ */
 #ifndef _object_h_
 #define _object_h_
 

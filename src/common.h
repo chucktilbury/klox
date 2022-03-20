@@ -1,3 +1,11 @@
+/**
+ * @file common.h
+ * @brief Define things that are required by every file in this system.
+ *
+ * @version 0.1
+ * @date 2022-03-19
+ *
+ */
 #ifndef _common_h_
 #define _common_h_
 

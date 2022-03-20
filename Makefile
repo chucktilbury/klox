@@ -3,46 +3,68 @@ PROJDIR	=	$(realpath $(CURDIR))
 BINDIR	=	$(PROJDIR)/bin
 OBJDIR	=	$(PROJDIR)/obj
 SRCDIR	=	$(PROJDIR)/src
+DOCDIR	=	$(PROJDIR)/docs
+DOCOUTDIR	= $(DOCDIR)/out
 INCDIR	=	$(PROJDIR)/include
 make_dirs := $(shell mkdir -p $(OBJDIR) $(BINDIR))
 
 TARGET	=	$(BINDIR)/klox
+DOCTARG	=	$(DOCOUTDIR)/html/index.html
 
-OBJLST	=	main.o \
-			chunk.o \
-			debug.o \
-			memory.o \
-			value.o \
-			vm.o \
-			compiler.o \
-			scanner.o \
-			object.o \
-			native.o \
-			native_defs.o \
-			table.o
+SRCLST	=	main.c \
+			chunk.c \
+			debug.c \
+			memory.c \
+			value.c \
+			vm.c \
+			compiler.c \
+			scanner.c \
+			object.c \
+			native.c \
+			native_defs.c \
+			table.c
 
-OBJS 	=	$(foreach item, $(OBJLST), $(addprefix $(OBJDIR)/, $(item)))
-SRCS	=	$(foreach item, $(OBJLST:.o=.c), $(addprefix $(SRCDIR)/, $(item)))
+HLST	=	common.h \
+			chunk.h \
+			debug.h \
+			memory.h \
+			value.h \
+			vm.h \
+			compiler.h \
+			scanner.h \
+			object.h \
+			native.h \
+			native_defs.h \
+			table.h
+
+
+OBJS 	=	$(foreach item, $(SRCLST:.c=.o), $(addprefix $(OBJDIR)/, $(item)))
+SRCS	=	$(foreach item, $(SRCLST), $(addprefix $(SRCDIR)/, $(item)))
+HEADERS	=	$(foreach item, $(HLST), $(addprefix $(SRCDIR)/, $(item)))
 
 # Build configurations
 #DTRACE	=	-DDEBUG_TRACE_EXECUTION
 DPRINT	=	-DDEBUG_PRINT_CODE
 #GPRINT	=	-DDEBUG_STRESS_GC
 #GLOG	=	-DDEBUG_LOG_GC
+#NANB	=	-DNAN_BOXING
 DEBUG	=	-g3 -Og
-#OPTO	=	-O3
+#OPTO	=	-Ofast
 INCS	= 	-I$(INCDIR)
 COPTS	=	-Wall -Wextra -std=c99 \
 			$(GPRINT) \
 			$(GLOG) \
 			$(DTRACE) \
 			$(DPRINT) \
+			$(NANB) \
 			$(OPTO) \
 			$(INCS) \
 			$(DEBUG)
 LIBS	=	-lreadline
 
 CC		=	gcc
+
+.PHONY: clean docs read format
 
 all: $(TARGET)
 
@@ -56,8 +78,16 @@ $(TARGET): $(OBJS)
 clean:
 	-$(RM) -r $(OBJDIR) $(BINDIR)
 
-ech:
-	@echo $(PROJDIR)"\n"$(OBJS)"\n"$(SRCS)"\n"
+clean-all: clean
+	-$(RM) -r $(DOCOUTDIR)
+
+$(DOCTARG): $(SRCS) $(HEADERS)
+	cd docs; doxygen doxygen.cfg
+
+docs: $(DOCTARG)
+
+read: docs
+	firefox $(DOCTARG)
 
 format:
 	cd src; astyle --options=astyle.rc *.c *.h; mv *.bak ../obj

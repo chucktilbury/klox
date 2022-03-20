@@ -1,3 +1,12 @@
+/**
+ * @file object.c
+ * @brief Manipulate objects in the system. Most of the entities that are
+ * referenced are handled in this module. (see values.c also)
+ *
+ * @version 0.1
+ * @date 2022-03-19
+ *
+ */
 #include <stdio.h>
 #include <string.h>
 
@@ -7,9 +16,22 @@
 #include "value.h"
 #include "vm.h"
 
+/**
+ * @brief Wrapper for allocateObject allows objects to be allocated by
+ * object type.
+ */
 #define ALLOCATE_OBJ(type, objectType) \
     (type*)allocateObject(sizeof(type), objectType)
 
+/**
+ * @brief Allocate an object and store it in the virtual machine. Program is
+ * aborted if this operation fails.
+ *
+ * @param size - size of the object in bytes
+ * @param type - enumerated type of the object
+ * @return Obj* - object pointer
+ *
+ */
 static Obj* allocateObject(size_t size, ObjType type)
 {
     Obj* object = (Obj*)reallocate(NULL, 0, size);
@@ -25,6 +47,15 @@ static Obj* allocateObject(size_t size, ObjType type)
 
     return object;
 }
+
+/**
+ * @brief Allocate a Bound Method object. Aborts program upon failure.
+ *
+ * @param receiver - ????
+ * @param method - closure to bind
+ * @return ObjBoundMethod* - pointer to the object.
+ *
+ */
 ObjBoundMethod* newBoundMethod(Value receiver, ObjClosure* method)
 {
     ObjBoundMethod* bound = ALLOCATE_OBJ(ObjBoundMethod,
@@ -34,14 +65,29 @@ ObjBoundMethod* newBoundMethod(Value receiver, ObjClosure* method)
     return bound;
 }
 
+/**
+ * @brief Allocate a class object. Aborts program upon failure.
+ *
+ * @param name - class name used to store in the hash table
+ * @return ObjClass* - pointer to the class object
+ *
+ */
 ObjClass* newClass(ObjString* name)
 {
     ObjClass* klass = ALLOCATE_OBJ(ObjClass, OBJ_CLASS);
-    klass->name = name; // [klass]
+    klass->name = name;
     initTable(&klass->methods);
     return klass;
 }
 
+/**
+ * @brief Allocate a closure object. Promotes upvalues. Aborts program upon
+ * failure.
+ *
+ * @param function - pointer to compiled function
+ * @return ObjClosure* - pointer to the new closure
+ *
+ */
 ObjClosure* newClosure(ObjFunction* function)
 {
     ObjUpvalue** upvalues = ALLOCATE(ObjUpvalue*,
@@ -57,6 +103,12 @@ ObjClosure* newClosure(ObjFunction* function)
     return closure;
 }
 
+/**
+ * @brief Create a new pointer to a function. Aborts program upon failure.
+ *
+ * @return ObjFunction* - pointer to the new function
+ *
+ */
 ObjFunction* newFunction()
 {
     ObjFunction* function = ALLOCATE_OBJ(ObjFunction, OBJ_FUNCTION);
@@ -67,6 +119,13 @@ ObjFunction* newFunction()
     return function;
 }
 
+/**
+ * @brief Create pointer to a new class instance.
+ *
+ * @param klass - pointer to the class
+ * @return ObjInstance* - pointer to the new instance
+ *
+ */
 ObjInstance* newInstance(ObjClass* klass)
 {
     ObjInstance* instance = ALLOCATE_OBJ(ObjInstance, OBJ_INSTANCE);
@@ -75,6 +134,13 @@ ObjInstance* newInstance(ObjClass* klass)
     return instance;
 }
 
+/**
+ * @brief Create a pointer to a new native function.
+ *
+ * @param function - the function to allocate
+ * @return ObjNative* - pointer to the new function
+ *
+ */
 ObjNative* newNative(NativeFn function)
 {
     ObjNative* native = ALLOCATE_OBJ(ObjNative, OBJ_NATIVE);
@@ -82,6 +148,15 @@ ObjNative* newNative(NativeFn function)
     return native;
 }
 
+/**
+ * @brief Create a new string. Aborts the program upon failure.
+ *
+ * @param chars - raw pointer to an array of characters
+ * @param length - length of the string (because it is not terminated)
+ * @param hash - the hash value is used to de-duplicate the string table
+ * @return ObjString* - pointer to the string object.
+ *
+ */
 static ObjString* allocateString(char* chars, int length, uint32_t hash)
 {
     ObjString* string = ALLOCATE_OBJ(ObjString, OBJ_STRING);
@@ -96,6 +171,15 @@ static ObjString* allocateString(char* chars, int length, uint32_t hash)
     return string;
 }
 
+/**
+ * @brief Create the hash value of the string. Used to store the string in
+ * the hash table as well as de-duplicate the string table.
+ *
+ * @param key - the string to calculate the hash upon
+ * @param length - the length of the string
+ * @return uint32_t - the result of the calculation
+ *
+ */
 static uint32_t hashString(const char* key, int length)
 {
     uint32_t hash = 2166136261u;
@@ -106,6 +190,15 @@ static uint32_t hashString(const char* key, int length)
     return hash;
 }
 
+/**
+ * @brief Take ownership of the raw characters and create a string object
+ * from them.
+ *
+ * @param chars - raw character buffer
+ * @param length - length of the string
+ * @return ObjString* - pointer to the new string object
+ *
+ */
 ObjString* takeString(char* chars, int length)
 {
     uint32_t hash = hashString(chars, length);
@@ -119,6 +212,14 @@ ObjString* takeString(char* chars, int length)
     return allocateString(chars, length, hash);
 }
 
+/**
+ * @brief Copy a raw buffer of characters into a string object.
+ *
+ * @param chars - buffer of characters
+ * @param length - length of the buffer
+ * @return ObjString* - pointer to resulting string
+ *
+ */
 ObjString* copyString(const char* chars, int length)
 {
     uint32_t hash = hashString(chars, length);
@@ -134,6 +235,14 @@ ObjString* copyString(const char* chars, int length)
     return allocateString(heapChars, length, hash);
 }
 
+/**
+ * @brief Create a new upvalue.
+ * TODO: Research this and document what this really does.
+ *
+ * @param slot
+ * @return ObjUpvalue*
+ *
+ */
 ObjUpvalue* newUpvalue(Value* slot)
 {
     ObjUpvalue* upvalue = ALLOCATE_OBJ(ObjUpvalue, OBJ_UPVALUE);
@@ -143,6 +252,12 @@ ObjUpvalue* newUpvalue(Value* slot)
     return upvalue;
 }
 
+/**
+ * @brief Print a function object to stdout.
+ *
+ * @param function - object to print
+ *
+ */
 static void printFunction(ObjFunction* function)
 {
     if(function->name == NULL) {
@@ -152,6 +267,12 @@ static void printFunction(ObjFunction* function)
     printf("<fn %s>", function->name->chars);
 }
 
+/**
+ * @brief Print various objects to stdout.
+ *
+ * @param value - object to print
+ *
+ */
 void printObject(Value value)
 {
     switch(OBJ_TYPE(value)) {

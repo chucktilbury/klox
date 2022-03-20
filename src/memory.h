@@ -1,3 +1,12 @@
+/**
+ * @file memory.h
+ * @brief Function and macro declarations for memory allocation and
+ * garbage collection.
+ *
+ * @version 0.1
+ * @date 2022-03-19
+ *
+ */
 #ifndef _memory_h_
 #define _memory_h_
 
