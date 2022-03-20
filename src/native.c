@@ -43,8 +43,10 @@ static NativeFunctions natives[] = {
  * the functions.
  *
  */
-void initNative() {
+void initNative()
+{
 
-    for(int i = 0; natives[i].name != NULL; i++)
+    for(int i = 0; natives[i].name != NULL; i++) {
         defineNative(natives[i].name, natives[i].func);
+    }
 }

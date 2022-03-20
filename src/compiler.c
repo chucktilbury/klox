@@ -526,15 +526,14 @@ static void dot(bool canAssign)
         expression();
         emitBytes(OP_SET_PROPERTY, name);
     }
-    else
-        if(match(TOKEN_LEFT_PAREN)) {
-            uint8_t argCount = argumentList();
-            emitBytes(OP_INVOKE, name);
-            emitByte(argCount);
-        }
-        else {
-            emitBytes(OP_GET_PROPERTY, name);
-        }
+    else if(match(TOKEN_LEFT_PAREN)) {
+        uint8_t argCount = argumentList();
+        emitBytes(OP_INVOKE, name);
+        emitByte(argCount);
+    }
+    else {
+        emitBytes(OP_GET_PROPERTY, name);
+    }
 }
 
 static void literal(bool canAssign)
@@ -642,10 +641,9 @@ static void super_(bool canAssign)
     if(currentClass == NULL) {
         error("Can't use 'super' outside of a class.");
     }
-    else
-        if(!currentClass->hasSuperclass) {
-            error("Can't use 'super' in a class with no superclass.");
-        }
+    else if(!currentClass->hasSuperclass) {
+        error("Can't use 'super' in a class with no superclass.");
+    }
 
     consume(TOKEN_DOT, "Expect '.' after 'super'.");
     consume(TOKEN_IDENTIFIER, "Expect superclass method name.");

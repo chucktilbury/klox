@@ -42,8 +42,9 @@ static void repl()
 
     printf("klox REPL. Type '.h(elp)) for a list of commands.\n");
     while(!quit) {
-        if(line != NULL)
+        if(line != NULL) {
             free(line);
+        }
 
         line = readline("klox > ");
 
@@ -149,14 +150,13 @@ int main(int argc, const char* argv[])
     if(argc == 1) {
         repl();
     }
-    else
-        if(argc == 2) {
-            runFile(argv[1]);
-        }
-        else {
-            fprintf(stderr, "Usage: klox [path]\n");
-            exit(64);
-        }
+    else if(argc == 2) {
+        runFile(argv[1]);
+    }
+    else {
+        fprintf(stderr, "Usage: klox [path]\n");
+        exit(64);
+    }
 
     freeVM();
 

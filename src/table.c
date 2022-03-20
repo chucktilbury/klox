@@ -42,11 +42,10 @@ static Entry* findEntry(Entry* entries, int capacity, ObjString* key)
                 }
             }
         }
-        else
-            if(entry->key == key) {
-                // We found the key.
-                return entry;
-            }
+        else if(entry->key == key) {
+            // We found the key.
+            return entry;
+        }
 
         index = (index + 1) & (capacity - 1);
     }
@@ -158,13 +157,12 @@ ObjString* tableFindString(Table* table, const char* chars,
                 return NULL;
             }
         }
-        else
-            if(entry->key->length == length &&
-               entry->key->hash == hash &&
-               memcmp(entry->key->chars, chars, length) == 0) {
-                // We found it.
-                return entry->key;
-            }
+        else if(entry->key->length == length &&
+                entry->key->hash == hash &&
+                memcmp(entry->key->chars, chars, length) == 0) {
+            // We found it.
+            return entry->key;
+        }
 
         index = (index + 1) & (table->capacity - 1);
     }

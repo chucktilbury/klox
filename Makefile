@@ -64,7 +64,7 @@ LIBS	=	-lreadline
 
 CC		=	gcc
 
-.PHONY: clean docs read format
+.PHONY: clean-docs clean docs read format
 
 all: $(TARGET)
 
@@ -78,7 +78,7 @@ $(TARGET): $(OBJS)
 clean:
 	-$(RM) -r $(OBJDIR) $(BINDIR)
 
-clean-all: clean
+clean-docs:
 	-$(RM) -r $(DOCOUTDIR)
 
 $(DOCTARG): $(SRCS) $(HEADERS)
@@ -90,4 +90,4 @@ read: docs
 	firefox $(DOCTARG)
 
 format:
-	cd src; astyle --options=astyle.rc *.c *.h; mv *.bak ../obj
+	cd src; astyle --options=astyle.rc $(SRCS) $(HEADERS); mv *.bak ../obj

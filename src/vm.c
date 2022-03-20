@@ -128,12 +128,11 @@ static bool callValue(Value callee, int argCount)
                                 &initializer)) {
                         return call(AS_CLOSURE(initializer), argCount);
                     }
-                    else
-                        if(argCount != 0) {
-                            runtimeError("Expected 0 arguments but got %d.",
-                                         argCount);
-                            return false;
-                        }
+                    else if(argCount != 0) {
+                        runtimeError("Expected 0 arguments but got %d.",
+                                     argCount);
+                        return false;
+                    }
                     return true;
                 }
 
@@ -273,7 +272,7 @@ static InterpretResult run()
 
 #define READ_BYTE() (*frame->ip++)
 #define READ_SHORT() (frame->ip += 2, \
-        (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]))
+                      (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]))
 #define READ_CONSTANT() (frame->closure->function->chunk.constants.values[READ_BYTE()])
 #define READ_STRING() AS_STRING(READ_CONSTANT())
 #define BINARY_OP(valueType, op) \
@@ -441,16 +440,15 @@ static InterpretResult run()
                     if(IS_STRING(peek(0)) && IS_STRING(peek(1))) {
                         concatenate();
                     }
-                    else
-                        if(IS_NUMBER(peek(0)) && IS_NUMBER(peek(1))) {
-                            double b = AS_NUMBER(pop());
-                            double a = AS_NUMBER(pop());
-                            push(NUMBER_VAL(a + b));
-                        }
-                        else {
-                            runtimeError("Operands must be two numbers or two strings.");
-                            return INTERPRET_RUNTIME_ERROR;
-                        }
+                    else if(IS_NUMBER(peek(0)) && IS_NUMBER(peek(1))) {
+                        double b = AS_NUMBER(pop());
+                        double a = AS_NUMBER(pop());
+                        push(NUMBER_VAL(a + b));
+                    }
+                    else {
+                        runtimeError("Operands must be two numbers or two strings.");
+                        return INTERPRET_RUNTIME_ERROR;
+                    }
                     break;
                 }
 

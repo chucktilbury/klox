@@ -11,7 +11,7 @@ formatted
 
 indent=spaces=4
 
-#attach-namespaces
+attach-namespaces
 attach-classes
 attach-inlines
 attach-extern-c
@@ -50,7 +50,7 @@ align-pointer=type
 align-reference=type
 
 break-closing-braces
-break-elseifs
+#break-elseifs
 break-one-line-headers
 add-braces
 #add-one-line-braces
