@@ -39,8 +39,6 @@ typedef struct Compiler {
     int scopeDepth;
 } Compiler;
 
-extern Compiler* current;
-
 void beginScope();
 void endScope();
 void patchJump(int offset);
@@ -51,11 +49,13 @@ void emitLoop(int loopStart);
 void emitByte(uint8_t byte);
 void emitBytes(uint8_t byte1, uint8_t byte2);
 
-ObjFunction* compile(const char* source);
 void markCompilerRoots();
 Token syntheticToken(const char* text);
-Chunk* currentChunk();
+
 void initCompiler(Compiler* compiler, FunctionType type);
 ObjFunction* endCompiler();
+ObjFunction* compileSource(const char* source);
+
+#define currentChunk() (&current->function->chunk)
 
 #endif

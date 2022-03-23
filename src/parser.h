@@ -12,15 +12,20 @@ typedef struct {
 } Parser;
 
 void declaration();
-bool checkType(TokenType type);
+
+bool matchToken(TokenType type);
 void advanceToken();
 void consumeToken(TokenType type, const char* message);
-bool matchToken(TokenType type);
+
+uint8_t identifierConstant(Token* name);
 uint8_t makeConstant(Value value);
+
 uint8_t parseVariable(const char* errorMessage);
 void defineVariable(uint8_t global);
 uint8_t identifierConstant(Token* name);
 void namedVariable(Token name, bool canAssign);
+
+#define checkType(t) (parser.current.type == (t))
 
 void errorAt(Token* token, const char* message);
 #define error(message)  errorAt(&parser.previous, message)

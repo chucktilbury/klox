@@ -84,17 +84,43 @@ ParseRule rules[] = {
 extern ClassCompiler* currentClass; // defined in compiler.c
 extern Parser parser; // defined in parser.c
 
-static ParseRule* getRule(TokenType type)
+void parsePrecedence(Precedence precedence)
 {
-    return &rules[type];
+    advanceToken();
+    //ParseFn prefixRule = getRule(parser.previous.type)->prefix;
+    ParseFn prefixRule = rules[parser.previous.type].prefix;
+    if(prefixRule == NULL) {
+        error("Expect expression.");
+        return;
+    }
+
+    bool canAssign = precedence <= PREC_ASSIGNMENT;
+    prefixRule(canAssign);
+
+    //while(precedence <= getRule(parser.current.type)->precedence) {
+    while(precedence <= rules[parser.current.type].precedence) {
+        advanceToken();
+        //ParseFn infixRule = getRule(parser.previous.type)->infix;
+        ParseFn infixRule = rules[parser.previous.type].infix;
+        infixRule(canAssign);
+    }
+
+    if(canAssign && matchToken(TOKEN_EQUAL)) {
+        error("Invalid assignment target.");
+    }
 }
+
+// static ParseRule* getRule(TokenType type)
+// {
+//     return &rules[type];
+// }
 
 static uint8_t argumentList()
 {
     uint8_t argCount = 0;
     if(!checkType(TOKEN_RIGHT_PAREN)) {
         do {
-            expression();
+            parsePrecedence(PREC_ASSIGNMENT);
             if(argCount == 255) {
                 error("Can't have more than 255 arguments.");
             }
@@ -122,7 +148,8 @@ static void binary(bool canAssign)
     (void)canAssign;
 
     TokenType operatorType = parser.previous.type;
-    ParseRule* rule = getRule(operatorType);
+    //ParseRule* rule = getRule(operatorType);
+    ParseRule* rule = &rules[operatorType];
     parsePrecedence((Precedence)(rule->precedence + 1));
 
     switch(operatorType) {
@@ -176,7 +203,7 @@ static void dot(bool canAssign)
     uint8_t name = identifierConstant(&parser.previous);
 
     if(canAssign && matchToken(TOKEN_EQUAL)) {
-        expression();
+        parsePrecedence(PREC_ASSIGNMENT);
         emitBytes(OP_SET_PROPERTY, name);
     }
     else if(matchToken(TOKEN_LEFT_PAREN)) {
@@ -212,7 +239,7 @@ static void grouping(bool canAssign)
 {
     (void)canAssign;
 
-    expression();
+    parsePrecedence(PREC_ASSIGNMENT);
     consumeToken(TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
 }
 
@@ -314,33 +341,10 @@ static void unary(bool canAssign)
     }
 }
 
-void expression()
-{
-    parsePrecedence(PREC_ASSIGNMENT);
-}
-
-void parsePrecedence(Precedence precedence)
-{
-    advanceToken();
-    ParseFn prefixRule = getRule(parser.previous.type)->prefix;
-    if(prefixRule == NULL) {
-        error("Expect expression.");
-        return;
-    }
-
-    bool canAssign = precedence <= PREC_ASSIGNMENT;
-    prefixRule(canAssign);
-
-    while(precedence <= getRule(
-                    parser.current.type)->precedence) {
-        advanceToken();
-        ParseFn infixRule = getRule(parser.previous.type)->infix;
-        infixRule(canAssign);
-    }
-
-    if(canAssign && matchToken(TOKEN_EQUAL)) {
-        error("Invalid assignment target.");
-    }
-}
+// void parseExpression()
+// {
+//     parsePrecedence(PREC_ASSIGNMENT);
+// }
+//
 
 

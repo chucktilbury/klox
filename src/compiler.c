@@ -145,10 +145,10 @@ void endScope()
     }
 }
 
-Chunk* currentChunk()
-{
-    return &current->function->chunk;
-}
+// Chunk* currentChunk()
+// {
+//     return &current->function->chunk;
+// }
 
 Token syntheticToken(const char* text)
 {
@@ -158,7 +158,7 @@ Token syntheticToken(const char* text)
     return token;
 }
 
-ObjFunction* compile(const char* source)
+ObjFunction* compileSource(const char* source)
 {
     initScanner(source);
     Compiler compiler;

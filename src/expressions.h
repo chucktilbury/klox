@@ -15,7 +15,7 @@ typedef enum {
     PREC_PRIMARY
 } Precedence;
 
+#define parseExpression() parsePrecedence(PREC_ASSIGNMENT)
 void parsePrecedence(Precedence precedence);
-void expression();
 
 #endif

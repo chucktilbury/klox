@@ -161,6 +161,7 @@ static bool call(ObjClosure* closure, int argCount)
     frame->slots = vm.stackTop - argCount - 1;
     return true;
 }
+
 /**
  * @brief Call a callable object.
  *
@@ -225,8 +226,7 @@ static bool callValue(Value callee, int argCount)
  * @return true - if there was no runtime error
  * @return false - if there was a runtime error
  */
-static bool invokeFromClass(ObjClass* klass,
-                            ObjString* name, int argCount)
+static bool invokeFromClass(ObjClass* klass, ObjString* name, int argCount)
 {
     Value method;
     if(!tableGet(&klass->methods, name, &method)) {
@@ -737,7 +737,7 @@ static InterpretResult run()
  */
 InterpretResult interpret(const char* source)
 {
-    ObjFunction* function = compile(source);
+    ObjFunction* function = compileSource(source);
     if(function == NULL) {
         return INTERPRET_COMPILE_ERROR;
     }
