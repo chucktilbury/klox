@@ -22,7 +22,9 @@ SLST	=	main.c \
 			object.c \
 			native.c \
 			native_defs.c \
-			table.c
+			table.c \
+			expressions.c \
+			parser.c
 
 HLST	=	common.h \
 			chunk.h \
@@ -35,7 +37,9 @@ HLST	=	common.h \
 			object.h \
 			native.h \
 			native_defs.h \
-			table.h
+			table.h \
+			expressions.h \
+			parser.h
 
 
 OBJS 	=	$(foreach item, $(SLST:.c=.o), $(addprefix $(OBJDIR)/, $(item)))

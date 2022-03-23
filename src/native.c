@@ -34,8 +34,8 @@ static void defineNative(const char* name,
  * @brief Definition of all native functions
  */
 static NativeFunctions natives[] = {
-    {"clock", clockNative, 0, NULL},
-    {NULL, NULL, 0, NULL}
+    {"clock", clockNative},
+    {NULL, NULL}
 };
 
 /**
