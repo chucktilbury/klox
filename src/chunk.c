@@ -31,7 +31,6 @@ void initChunk(Chunk* chunk)
  * @brief Free the memory associated with the chunk.
  *
  * @param chunk - the chunk to destroy
- *
  */
 void freeChunk(Chunk* chunk)
 {
@@ -47,7 +46,6 @@ void freeChunk(Chunk* chunk)
  * @param chunk - the chunk to write to
  * @param byte - the byte to write to the chunk
  * @param line - line number from source code
- *
  */
 void writeChunk(Chunk* chunk, uint8_t byte, int line)
 {
@@ -71,8 +69,8 @@ void writeChunk(Chunk* chunk, uint8_t byte, int line)
  *
  * @param chunk - the chunk to write to
  * @param value - the value to write
- * @return int - the index of the constant that was written.
  *
+ * @return int - the index of the constant that was written.
  */
 int addConstant(Chunk* chunk, Value value)
 {

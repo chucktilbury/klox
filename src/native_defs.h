@@ -20,8 +20,6 @@
 typedef struct {
     const char* name;
     NativeFn func;
-    int count;
-    Value* args;
 } NativeFunctions;
 
 Value clockNative(int argCount, Value* args);

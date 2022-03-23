@@ -1,3 +1,11 @@
+/**
+ * @file vm.c
+ * @brief Virtual Machine. This is a self-contained virtual machine.
+ *
+ * @version 0.1
+ * @date 2022-03-22
+ *
+ */
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -13,6 +21,9 @@
 
 VM vm;
 
+/**
+ * @brief Reset the frame stack. Called between VM runs.
+ */
 static void resetStack()
 {
     vm.stackTop = vm.stack;
@@ -20,8 +31,15 @@ static void resetStack()
     vm.openUpvalues = NULL;
 }
 
+/**
+ * @brief Print a runtime error.
+ *
+ * @param format
+ * @param ...
+ */
 static void runtimeError(const char* format, ...)
 {
+    fprintf(stderr, "Runtime Error: ");
     va_list args;
     va_start(args, format);
     vfprintf(stderr, format, args);
@@ -45,6 +63,9 @@ static void runtimeError(const char* format, ...)
     resetStack();
 }
 
+/**
+ * @brief Initialize the virtual machine and get it ready for a run.
+ */
 void initVM()
 {
     resetStack();
@@ -65,6 +86,9 @@ void initVM()
     initNative();
 }
 
+/**
+ * @brief Release the memory associated with a particular virtual machine run.
+ */
 void freeVM()
 {
     freeTable(&vm.globals);
@@ -73,23 +97,51 @@ void freeVM()
     freeObjects();
 }
 
+/**
+ * @brief Push a value on to the runtime stack.
+ * TODO: Clarify what this stack actually does.
+ *
+ * @param value - the value to push on to the stack
+ */
 void push(Value value)
 {
     *vm.stackTop = value;
     vm.stackTop++;
 }
 
+/**
+ * @brief Remove a value from the runtime stack and return it.
+ *
+ * @return Value - return value
+ */
 Value pop()
 {
     vm.stackTop--;
     return *vm.stackTop;
 }
 
+/**
+ * @brief Peek at the stack at a given index.
+ *
+ * @param distance - index from top of the stack
+ *
+ * @return Value - return value
+ */
 static Value peek(int distance)
 {
     return vm.stackTop[-1 - distance];
 }
 
+/**
+ * @brief Call a closure.
+ * TODO: Define the term "closure" better.
+ *
+ * @param closure - the closure to call
+ * @param argCount - number of arguments on the value stack
+ *
+ * @return true - there was no runtime error
+ * @return false - a runtime error occurred.
+ */
 static bool call(ObjClosure* closure, int argCount)
 {
     if(argCount != closure->function->arity) {
@@ -109,7 +161,15 @@ static bool call(ObjClosure* closure, int argCount)
     frame->slots = vm.stackTop - argCount - 1;
     return true;
 }
-
+/**
+ * @brief Call a callable object.
+ *
+ * @param callee - the object to call
+ * @param argCount - number of args on the value stack
+ *
+ * @return true - if there was no runtime error
+ * @return false - if a runtime error happened
+ */
 static bool callValue(Value callee, int argCount)
 {
     if(IS_OBJ(callee)) {
@@ -154,6 +214,17 @@ static bool callValue(Value callee, int argCount)
     return false;
 }
 
+/**
+ * @brief Invoke a class method from a closure.
+ * TODO: Verify this
+ *
+ * @param klass - the class object
+ * @param name - name of the class
+ * @param argCount - number of args on the value stack
+ *
+ * @return true - if there was no runtime error
+ * @return false - if there was a runtime error
+ */
 static bool invokeFromClass(ObjClass* klass,
                             ObjString* name, int argCount)
 {
@@ -165,6 +236,15 @@ static bool invokeFromClass(ObjClass* klass,
     return call(AS_CLOSURE(method), argCount);
 }
 
+/**
+ * @brief Invoke a class method.
+ *
+ * @param name - name of the method
+ * @param argCount - arg count on the value stack
+ *
+ * @return true
+ * @return false
+ */
 static bool invoke(ObjString* name, int argCount)
 {
     Value receiver = peek(argCount);
@@ -185,6 +265,15 @@ static bool invoke(ObjString* name, int argCount)
     return invokeFromClass(instance->klass, name, argCount);
 }
 
+/**
+ * @brief Call a bound method.
+ *
+ * @param klass - class object
+ * @param name - name of the bound object
+ *
+ * @return true - if there was no runtime error
+ * @return false - if there was a runtime error
+ */
 static bool bindMethod(ObjClass* klass, ObjString* name)
 {
     Value method;
@@ -193,13 +282,20 @@ static bool bindMethod(ObjClass* klass, ObjString* name)
         return false;
     }
 
-    ObjBoundMethod* bound = newBoundMethod(peek(0),
-                                           AS_CLOSURE(method));
+    ObjBoundMethod* bound = newBoundMethod(peek(0), AS_CLOSURE(method));
     pop();
     push(OBJ_VAL(bound));
     return true;
 }
 
+/**
+ * @brief When a closure refers to a var that was defined outside of it, the
+ * var needs to be caputured as an upvalue.
+ *
+ * @param local - the value to capture
+ *
+ * @return ObjUpvalue* - the captured upvalue
+ */
 static ObjUpvalue* captureUpvalue(Value* local)
 {
     ObjUpvalue* prevUpvalue = NULL;
@@ -226,10 +322,15 @@ static ObjUpvalue* captureUpvalue(Value* local)
     return createdUpvalue;
 }
 
+/**
+ * @brief TODO: Define this
+ *
+ * @param last
+ *
+ */
 static void closeUpvalues(Value* last)
 {
-    while(vm.openUpvalues != NULL &&
-            vm.openUpvalues->location >= last) {
+    while(vm.openUpvalues != NULL && vm.openUpvalues->location >= last) {
         ObjUpvalue* upvalue = vm.openUpvalues;
         upvalue->closed = *upvalue->location;
         upvalue->location = &upvalue->closed;
@@ -237,6 +338,13 @@ static void closeUpvalues(Value* last)
     }
 }
 
+/**
+ * @brief Add a method to the instruction stream.
+ * TODO: define this.
+ *
+ * @param name
+ *
+ */
 static void defineMethod(ObjString* name)
 {
     Value method = peek(0);
@@ -245,11 +353,24 @@ static void defineMethod(ObjString* name)
     pop();
 }
 
+/**
+ * @brief If a value is nill, then it is also false. Also see if it is false
+ * in a boolean sense.
+ *
+ * @param value - value to check
+ *
+ * @return true - if the value is false
+ * @return false - if the value is true
+ */
 static bool isFalsey(Value value)
 {
     return IS_NIL(value) || (IS_BOOL(value) && !AS_BOOL(value));
 }
 
+/**
+ * @brief Concatenate two string objects. Returns a third object with the
+ * concatinated strings.
+ */
 static void concatenate()
 {
     ObjString* b = AS_STRING(peek(0));
@@ -267,6 +388,11 @@ static void concatenate()
     push(OBJ_VAL(result));
 }
 
+/**
+ * @brief Run the current vm instruction stream.
+ *
+ * @return InterpretResult - the status of the run.
+ */
 static InterpretResult run()
 {
     CallFrame* frame = &vm.frames[vm.frameCount - 1];
@@ -602,6 +728,13 @@ static InterpretResult run()
 #undef BINARY_OP
 }
 
+/**
+ * @brief Scan, compile, and run the text given in the text buffer.
+ *
+ * @param source - source code to run
+ *
+ * @return InterpretResult - results of the run
+ */
 InterpretResult interpret(const char* source)
 {
     ObjFunction* function = compile(source);

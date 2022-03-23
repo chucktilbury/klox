@@ -1,3 +1,13 @@
+/**
+ * @file value.c
+ * @brief Support generic data objects in the interpreter. Values are the
+ * foundation for objects, which are the abstraction used to move defined
+ * objects around the virtual machine.
+ *
+ * @version 0.1
+ * @date 2022-03-22
+ *
+ */
 #include <stdio.h>
 #include <string.h>
 
@@ -5,6 +15,11 @@
 #include "memory.h"
 #include "value.h"
 
+/**
+ * @brief Create a generic value data structure with no contents.
+ *
+ * @param array - value array to clear
+ */
 void initValueArray(ValueArray* array)
 {
     array->values = NULL;
@@ -12,6 +27,12 @@ void initValueArray(ValueArray* array)
     array->count = 0;
 }
 
+/**
+ * @brief Add an entry into the value array.
+ *
+ * @param array - the array to add into
+ * @param value - the generic value to add
+ */
 void writeValueArray(ValueArray* array, Value value)
 {
     if(array->capacity < array->count + 1) {
@@ -25,12 +46,23 @@ void writeValueArray(ValueArray* array, Value value)
     array->count++;
 }
 
+/**
+ * @brief Destroy and clear the memory associated with a value array.
+ *
+ * @param array - the array to destroy
+ */
 void freeValueArray(ValueArray* array)
 {
     FREE_ARRAY(Value, array->values, array->capacity);
     initValueArray(array);
 }
 
+/**
+ * @brief For debugging. Print a representation of the value in the array to
+ * stdout.
+ *
+ * @param value - the value to print
+ */
 void printValue(Value value)
 {
 #ifdef NAN_BOXING
@@ -65,6 +97,16 @@ void printValue(Value value)
 #endif
 }
 
+/**
+ * @brief Check two numbers to see if they are equal. If they are not the
+ * same type, then they cannot be equal.
+ *
+ * @param a - first value to compare
+ * @param b - second value
+ *
+ * @return true - if the values are the same
+ * @return false - if the values are different
+ */
 bool valuesEqual(Value a, Value b)
 {
 #ifdef NAN_BOXING

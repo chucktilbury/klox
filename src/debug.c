@@ -18,7 +18,6 @@
  *
  * @param chunk - the chunk to operate on
  * @param name - a name to display that is associated with the chunk
- *
  */
 void disassembleChunk(Chunk* chunk, const char* name)
 {
@@ -36,8 +35,8 @@ void disassembleChunk(Chunk* chunk, const char* name)
  * @param name - the name of the instruction
  * @param chunk - the chunk that holds the instruction
  * @param offset - index of the instruction in the instruction array
- * @return int - new offset into the array of instructions
  *
+ * @return int - new offset into the array of instructions
  */
 static int constantInstruction(const char* name,
                                Chunk* chunk, int offset)
@@ -56,8 +55,8 @@ static int constantInstruction(const char* name,
  * @param name - name of the instruction for display
  * @param chunk - the chunk that holds the instruction
  * @param offset - index of the instruction in the instruction array
- * @return int - new offset into the instruction array
  *
+ * @return int - new offset into the instruction array
  */
 static int invokeInstruction(const char* name, Chunk* chunk,
                              int offset)
@@ -75,8 +74,8 @@ static int invokeInstruction(const char* name, Chunk* chunk,
  *
  * @param name - name of the instruction
  * @param offset - index of the instruction in the instruction array
- * @return int - new offset into the instruction array
  *
+ * @return int - new offset into the instruction array
  */
 static int simpleInstruction(const char* name, int offset)
 {
@@ -91,8 +90,8 @@ static int simpleInstruction(const char* name, int offset)
  * @param name - name of the instruction
  * @param chunk - the chunk that contains the data
  * @param offset - index of the instruction in the instruction array
- * @return int - new offset into the instruction array
  *
+ * @return int - new offset into the instruction array
  */
 static int byteInstruction(const char* name, Chunk* chunk,
                            int offset)
@@ -110,8 +109,8 @@ static int byteInstruction(const char* name, Chunk* chunk,
  * @param sign - whether the jump increases the ip or decreases it
  * @param chunk - the chunk that contains the data
  * @param offset - index of the instruction in the instruction array
- * @return int - new offset into the instruction array
  *
+ * @return int - new offset into the instruction array
  */
 static int jumpInstruction(const char* name, int sign,
                            Chunk* chunk, int offset)
@@ -128,8 +127,8 @@ static int jumpInstruction(const char* name, int sign,
  *
  * @param chunk - the chunk that contains the data
  * @param offset - index of the instruction in the instruction array
- * @return int - new offset into the instruction array
  *
+ * @return int - new offset into the instruction array
  */
 int disassembleInstruction(Chunk* chunk, int offset)
 {

@@ -28,8 +28,8 @@
  * @param pointer - pointer to reallocate. Null creates a new pointer.
  * @param oldSize - used when downsizing a memory allocation
  * @param newSize - size of the new allocation
- * @return void* - pointer to the allocated memory
  *
+ * @return void* - pointer to the allocated memory
  */
 void* reallocate(void* pointer, size_t oldSize,
                  size_t newSize)
@@ -61,7 +61,6 @@ void* reallocate(void* pointer, size_t oldSize,
  * @brief Garbage collection. This function controls marking the object as gray.
  *
  * @param object - the object to mark
- *
  */
 void markObject(Obj* object)
 {
@@ -97,7 +96,6 @@ void markObject(Obj* object)
  * @brief Mark a value-type object.
  *
  * @param value - the value to mark
- *
  */
 void markValue(Value value)
 {
@@ -110,7 +108,6 @@ void markValue(Value value)
  * @brief Mark an array-typed object as gray.
  *
  * @param array - the object to mark
- *
  */
 static void markArray(ValueArray* array)
 {
@@ -124,7 +121,6 @@ static void markArray(ValueArray* array)
  * be deleted.
  *
  * @param object - the object to mark
- *
  */
 static void blackenObject(Obj* object)
 {
@@ -181,7 +177,6 @@ static void blackenObject(Obj* object)
  * that is called.
  *
  * @param object - object to free
- *
  */
 static void freeObject(Obj* object)
 {
@@ -235,7 +230,6 @@ static void freeObject(Obj* object)
 
 /**
  * @brief Marking the roots of reachable objects.
- *
  */
 static void markRoots()
 {
@@ -260,7 +254,6 @@ static void markRoots()
 
 /**
  * @brief Find all of the object references.
- *
  */
 static void traceReferences()
 {
@@ -272,7 +265,6 @@ static void traceReferences()
 
 /**
  * @brief Free all unmarked objects.
- *
  */
 static void sweep()
 {
@@ -302,7 +294,6 @@ static void sweep()
 /**
  * @brief Main interface. This is called to initiate the garbage collection.
  * This returns when all of the memory has been examined and kept or deleted.
- *
  */
 void collectGarbage()
 {
@@ -328,7 +319,6 @@ void collectGarbage()
 
 /**
  * @brief Free all of the objects at the end of the run.
- *
  */
 void freeObjects()
 {

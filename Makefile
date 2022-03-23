@@ -11,7 +11,7 @@ make_dirs := $(shell mkdir -p $(OBJDIR) $(BINDIR))
 TARGET	=	$(BINDIR)/klox
 DOCTARG	=	$(DOCOUTDIR)/html/index.html
 
-SRCLST	=	main.c \
+SLST	=	main.c \
 			chunk.c \
 			debug.c \
 			memory.c \
@@ -38,8 +38,8 @@ HLST	=	common.h \
 			table.h
 
 
-OBJS 	=	$(foreach item, $(SRCLST:.c=.o), $(addprefix $(OBJDIR)/, $(item)))
-SRCS	=	$(foreach item, $(SRCLST), $(addprefix $(SRCDIR)/, $(item)))
+OBJS 	=	$(foreach item, $(SLST:.c=.o), $(addprefix $(OBJDIR)/, $(item)))
+SRCS	=	$(foreach item, $(SLST), $(addprefix $(SRCDIR)/, $(item)))
 HEADERS	=	$(foreach item, $(HLST), $(addprefix $(SRCDIR)/, $(item)))
 
 # Build configurations
@@ -64,7 +64,7 @@ LIBS	=	-lreadline
 
 CC		=	gcc
 
-.PHONY: clean-docs clean docs read format
+.PHONY: clean-docs clean distclean docs read format
 
 all: $(TARGET)
 
@@ -80,6 +80,8 @@ clean:
 
 clean-docs:
 	-$(RM) -r $(DOCOUTDIR)
+
+distclean: clean clean-docs
 
 $(DOCTARG): $(SRCS) $(HEADERS)
 	cd docs; \

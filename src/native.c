@@ -19,7 +19,6 @@
  *
  * @param name - the name as it will be seen in the source code
  * @param function - pointer to the handler
- *
  */
 static void defineNative(const char* name,
                          NativeFn function)
@@ -42,7 +41,6 @@ static NativeFunctions natives[] = {
 /**
  * @brief Iterate through the native function data structure and create all of
  * the functions.
- *
  */
 void initNative()
 {

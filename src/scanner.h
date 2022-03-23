@@ -1,3 +1,11 @@
+/**
+ * @file scanner.h
+ * @brief Define the token types and the interface into the scanner.
+ *
+ * @version 0.1
+ * @date 2022-03-20
+ *
+ */
 #ifndef _scanner_h_
 #define _scanner_h_
 

@@ -29,8 +29,8 @@
  *
  * @param size - size of the object in bytes
  * @param type - enumerated type of the object
- * @return Obj* - object pointer
  *
+ * @return Obj* - object pointer
  */
 static Obj* allocateObject(size_t size, ObjType type)
 {
@@ -54,8 +54,8 @@ static Obj* allocateObject(size_t size, ObjType type)
  *
  * @param receiver - ????
  * @param method - closure to bind
- * @return ObjBoundMethod* - pointer to the object.
  *
+ * @return ObjBoundMethod* - pointer to the object.
  */
 ObjBoundMethod* newBoundMethod(Value receiver,
                                ObjClosure* method)
@@ -71,8 +71,8 @@ ObjBoundMethod* newBoundMethod(Value receiver,
  * @brief Allocate a class object. Aborts program upon failure.
  *
  * @param name - class name used to store in the hash table
- * @return ObjClass* - pointer to the class object
  *
+ * @return ObjClass* - pointer to the class object
  */
 ObjClass* newClass(ObjString* name)
 {
@@ -87,8 +87,8 @@ ObjClass* newClass(ObjString* name)
  * failure.
  *
  * @param function - pointer to compiled function
- * @return ObjClosure* - pointer to the new closure
  *
+ * @return ObjClosure* - pointer to the new closure
  */
 ObjClosure* newClosure(ObjFunction* function)
 {
@@ -109,7 +109,6 @@ ObjClosure* newClosure(ObjFunction* function)
  * @brief Create a new pointer to a function. Aborts program upon failure.
  *
  * @return ObjFunction* - pointer to the new function
- *
  */
 ObjFunction* newFunction()
 {
@@ -125,8 +124,8 @@ ObjFunction* newFunction()
  * @brief Create pointer to a new class instance.
  *
  * @param klass - pointer to the class
- * @return ObjInstance* - pointer to the new instance
  *
+ * @return ObjInstance* - pointer to the new instance
  */
 ObjInstance* newInstance(ObjClass* klass)
 {
@@ -140,8 +139,8 @@ ObjInstance* newInstance(ObjClass* klass)
  * @brief Create a pointer to a new native function.
  *
  * @param function - the function to allocate
- * @return ObjNative* - pointer to the new function
  *
+ * @return ObjNative* - pointer to the new function
  */
 ObjNative* newNative(NativeFn function)
 {
@@ -156,8 +155,8 @@ ObjNative* newNative(NativeFn function)
  * @param chars - raw pointer to an array of characters
  * @param length - length of the string (because it is not terminated)
  * @param hash - the hash value is used to de-duplicate the string table
- * @return ObjString* - pointer to the string object.
  *
+ * @return ObjString* - pointer to the string object.
  */
 static ObjString* allocateString(char* chars, int length, uint32_t hash)
 {
@@ -179,8 +178,8 @@ static ObjString* allocateString(char* chars, int length, uint32_t hash)
  *
  * @param key - the string to calculate the hash upon
  * @param length - the length of the string
- * @return uint32_t - the result of the calculation
  *
+ * @return uint32_t - the result of the calculation
  */
 static uint32_t hashString(const char* key, int length)
 {
@@ -198,8 +197,8 @@ static uint32_t hashString(const char* key, int length)
  *
  * @param chars - raw character buffer
  * @param length - length of the string
- * @return ObjString* - pointer to the new string object
  *
+ * @return ObjString* - pointer to the new string object
  */
 ObjString* takeString(char* chars, int length)
 {
@@ -218,8 +217,8 @@ ObjString* takeString(char* chars, int length)
  *
  * @param chars - buffer of characters
  * @param length - length of the buffer
- * @return ObjString* - pointer to resulting string
  *
+ * @return ObjString* - pointer to resulting string
  */
 ObjString* copyString(const char* chars, int length)
 {
@@ -240,8 +239,8 @@ ObjString* copyString(const char* chars, int length)
  * TODO: Research this and document what this really does.
  *
  * @param slot
- * @return ObjUpvalue*
  *
+ * @return ObjUpvalue*
  */
 ObjUpvalue* newUpvalue(Value* slot)
 {
@@ -256,7 +255,6 @@ ObjUpvalue* newUpvalue(Value* slot)
  * @brief Print a function object to stdout.
  *
  * @param function - object to print
- *
  */
 static void printFunction(ObjFunction* function)
 {
@@ -271,7 +269,6 @@ static void printFunction(ObjFunction* function)
  * @brief Print various objects to stdout.
  *
  * @param value - object to print
- *
  */
 void printObject(Value value)
 {

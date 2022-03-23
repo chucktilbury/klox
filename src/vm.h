@@ -1,3 +1,11 @@
+/**
+ * @file vm.h
+ * @brief Define the interface to the virtual machine.
+ *
+ * @version 0.1
+ * @date 2022-03-22
+ *
+ */
 #ifndef _vm_h_
 #define _vm_h_
 

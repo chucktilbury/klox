@@ -21,7 +21,6 @@
 /**
  * @brief Print simple help text for the REPL functionality. This is mostly
  * a stub for when there are debugging commands implemented.
- *
  */
 static void printHelp()
 {
@@ -33,7 +32,6 @@ static void printHelp()
 /**
  * @brief Accept random correct code and submit it to the interpreter for
  * execution.
- *
  */
 static void repl()
 {
@@ -81,8 +79,8 @@ static void repl()
  * to be compiled and interpreted.
  *
  * @param path - fully qualified file name
- * @return char* - pointer to the raw text of the file
  *
+ * @return char* - pointer to the raw text of the file
  */
 static char* readFile(const char* path)
 {
@@ -121,7 +119,6 @@ static char* readFile(const char* path)
  * processing.
  *
  * @param path - fully qualified file name
- *
  */
 static void runFile(const char* path)
 {
@@ -142,8 +139,8 @@ static void runFile(const char* path)
  *
  * @param argc - number of command line arguments, set by runtime system of host
  * @param argv - array of strings for command arguments set by system
- * @return int - return 0 if no error
  *
+ * @return int - return 0 if no error
  */
 int main(int argc, const char* argv[])
 {

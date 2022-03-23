@@ -1,5 +1,13 @@
-#ifndef clox_value_h
-#define clox_value_h
+/**
+ * @file value.h
+ * @brief Define the public interface to values in the system.
+ *
+ * @version 0.1
+ * @date 2022-03-22
+ *
+ */
+#ifndef _value_h_
+#define _value_h_
 
 #include <string.h>
 
@@ -8,6 +16,7 @@
 typedef struct Obj Obj;
 typedef struct ObjString ObjString;
 
+// NAN_BOXING variable is configured in the makefile
 #ifdef NAN_BOXING
 
 #define SIGN_BIT ((uint64_t)0x8000000000000000)
@@ -52,7 +61,7 @@ static inline Value numToValue(double num)
     return value;
 }
 
-#else
+#else /* NAN_BOXING */
 
 typedef enum {
     VAL_BOOL,
@@ -84,8 +93,11 @@ typedef struct {
 #define NUMBER_VAL(value) ((Value){VAL_NUMBER, {.number = value}})
 #define OBJ_VAL(object)   ((Value){VAL_OBJ, {.obj = (Obj*)object}})
 
-#endif
+#endif /* ! NAN_BOXING */
 
+/*
+ * Public interface
+ */
 typedef struct {
     int capacity;
     int count;

@@ -15,8 +15,8 @@
  *
  * @param argCount - number of parameters = 0
  * @param args - no arguments defined
- * @return Value - returns the clock value as defined in the C runtime.
  *
+ * @return Value - returns the clock value as defined in the C runtime.
  */
 Value clockNative(int argCount, Value* args)
 {
