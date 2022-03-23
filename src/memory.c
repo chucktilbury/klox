@@ -18,6 +18,95 @@
 #endif
 
 #define GC_HEAP_GROW_FACTOR 2
+extern Compiler* current;
+
+/**
+ * @brief Garbage collection. This function controls marking the object as gray.
+ *
+ * @param object - the object to mark
+ */
+static inline void markObject(Obj* object)
+{
+    if(object == NULL) {
+        return;
+    }
+    if(object->isMarked) {
+        return;
+    }
+
+#ifdef DEBUG_LOG_GC
+    printf("%p mark ", (void*)object);
+    printValue(OBJ_VAL(object));
+    printf("\n");
+#endif
+
+    object->isMarked = true;
+
+    if(vm.grayCapacity < vm.grayCount + 1) {
+        vm.grayCapacity = GROW_CAPACITY(vm.grayCapacity);
+        vm.grayStack = (Obj**)realloc(vm.grayStack,
+                                      sizeof(Obj*) * vm.grayCapacity);
+
+        if(vm.grayStack == NULL) {
+            exit(1);
+        }
+    }
+
+    vm.grayStack[vm.grayCount++] = object;
+}
+
+/**
+ * @brief Mark a value-type object.
+ *
+ * @param value - the value to mark
+ */
+static inline void markValue(Value value)
+{
+    if(IS_OBJ(value)) {
+        markObject(AS_OBJ(value));
+    }
+}
+
+/**
+ * @brief Mark the root nodes for allocations for the compiler.
+ */
+static inline void markCompilerRoots()
+{
+    Compiler* compiler = current;
+    while(compiler != NULL) {
+        markObject((Obj*)compiler->function);
+        compiler = compiler->enclosing;
+    }
+}
+
+/**
+ * @brief Remove entries in the table for garbage collection.
+ *
+ * @param table - the hash table
+ */
+static inline void tableRemoveWhite(Table* table)
+{
+    for(int i = 0; i < table->capacity; i++) {
+        Entry* entry = &table->entries[i];
+        if(entry->key != NULL && !entry->key->obj.isMarked) {
+            tableDelete(table, entry->key);
+        }
+    }
+}
+
+/**
+ * @brief Mark table entries for the purpose of garbage collection.
+ *
+ * @param table - the hash table
+ */
+static inline void markTable(Table* table)
+{
+    for(int i = 0; i < table->capacity; i++) {
+        Entry* entry = &table->entries[i];
+        markObject((Obj*)entry->key);
+        markValue(entry->value);
+    }
+}
 
 /**
  * @brief Main memory allocation and free point in the system. Main support
@@ -58,58 +147,11 @@ void* reallocate(void* pointer, size_t oldSize,
 }
 
 /**
- * @brief Garbage collection. This function controls marking the object as gray.
- *
- * @param object - the object to mark
- */
-void markObject(Obj* object)
-{
-    if(object == NULL) {
-        return;
-    }
-    if(object->isMarked) {
-        return;
-    }
-
-#ifdef DEBUG_LOG_GC
-    printf("%p mark ", (void*)object);
-    printValue(OBJ_VAL(object));
-    printf("\n");
-#endif
-
-    object->isMarked = true;
-
-    if(vm.grayCapacity < vm.grayCount + 1) {
-        vm.grayCapacity = GROW_CAPACITY(vm.grayCapacity);
-        vm.grayStack = (Obj**)realloc(vm.grayStack,
-                                      sizeof(Obj*) * vm.grayCapacity);
-
-        if(vm.grayStack == NULL) {
-            exit(1);
-        }
-    }
-
-    vm.grayStack[vm.grayCount++] = object;
-}
-
-/**
- * @brief Mark a value-type object.
- *
- * @param value - the value to mark
- */
-void markValue(Value value)
-{
-    if(IS_OBJ(value)) {
-        markObject(AS_OBJ(value));
-    }
-}
-
-/**
  * @brief Mark an array-typed object as gray.
  *
  * @param array - the object to mark
  */
-static void markArray(ValueArray* array)
+static inline void markArray(ValueArray* array)
 {
     for(int i = 0; i < array->count; i++) {
         markValue(array->values[i]);
@@ -122,7 +164,7 @@ static void markArray(ValueArray* array)
  *
  * @param object - the object to mark
  */
-static void blackenObject(Obj* object)
+static inline void blackenObject(Obj* object)
 {
 #ifdef DEBUG_LOG_GC
     printf("%p blacken ", (void*)object);
@@ -178,7 +220,7 @@ static void blackenObject(Obj* object)
  *
  * @param object - object to free
  */
-static void freeObject(Obj* object)
+static inline void freeObject(Obj* object)
 {
 #ifdef DEBUG_LOG_GC
     printf("%p free type %d\n", (void*)object, object->type);
@@ -231,7 +273,7 @@ static void freeObject(Obj* object)
 /**
  * @brief Marking the roots of reachable objects.
  */
-static void markRoots()
+static inline void markRoots()
 {
     for(Value* slot = vm.stack; slot < vm.stackTop; slot++) {
         markValue(*slot);
@@ -255,7 +297,7 @@ static void markRoots()
 /**
  * @brief Find all of the object references.
  */
-static void traceReferences()
+static inline void traceReferences()
 {
     while(vm.grayCount > 0) {
         Obj* object = vm.grayStack[--vm.grayCount];
@@ -266,7 +308,7 @@ static void traceReferences()
 /**
  * @brief Free all unmarked objects.
  */
-static void sweep()
+static inline void sweep()
 {
     Obj* previous = NULL;
     Obj* object = vm.objects;

@@ -16,6 +16,7 @@ SLST	=	main.c \
 			debug.c \
 			memory.c \
 			value.c \
+			vm_support.c \
 			vm.c \
 			compiler.c \
 			scanner.c \
@@ -31,6 +32,7 @@ HLST	=	common.h \
 			debug.h \
 			memory.h \
 			value.h \
+			vm_support.h \
 			vm.h \
 			compiler.h \
 			scanner.h \
@@ -47,19 +49,19 @@ SRCS	=	$(foreach item, $(SLST), $(addprefix $(SRCDIR)/, $(item)))
 HEADERS	=	$(foreach item, $(HLST), $(addprefix $(SRCDIR)/, $(item)))
 
 # Build configurations
-#DTRACE	=	-DDEBUG_TRACE_EXECUTION
-DPRINT	=	-DDEBUG_PRINT_CODE
-#GPRINT	=	-DDEBUG_STRESS_GC
-#GLOG	=	-DDEBUG_LOG_GC
+#TRACE	=	-DDEBUG_TRACE_EXECUTION
+PRINT	=	-DDEBUG_PRINT_CODE
+#STRESS	=	-DDEBUG_STRESS_GC
+#LOG	=	-DDEBUG_LOG_GC
 #NANB	=	-DNAN_BOXING
 DEBUG	=	-g3 -Og
 #OPTO	=	-Ofast
 INCS	= 	-I$(INCDIR)
-COPTS	=	-Wall -Wextra -std=c99 \
-			$(GPRINT) \
-			$(GLOG) \
-			$(DTRACE) \
-			$(DPRINT) \
+COPTS	=	-Wall -Wextra -std=c99 -Wno-unused-value \
+			$(PRINT) \
+			$(LOG) \
+			$(TRACE) \
+			$(STRESS) \
 			$(NANB) \
 			$(OPTO) \
 			$(INCS) \

@@ -39,7 +39,7 @@ ObjString* tableFindString(Table* table, const char* chars,
                            int length, uint32_t hash);
 
 // support garbage collection
-void tableRemoveWhite(Table* table);
-void markTable(Table* table);
+//void tableRemoveWhite(Table* table);
+//void markTable(Table* table);
 
 #endif

@@ -52,7 +52,25 @@ extern VM vm;
 void initVM();
 void freeVM();
 InterpretResult interpret(const char* source);
-void push(Value value);
-Value pop();
+
+/*
+ * These inlines help speed quite a bit...
+ */
+static inline void push(Value value)
+{
+    *vm.stackTop = value;
+    vm.stackTop++;
+}
+
+static inline Value pop()
+{
+    vm.stackTop--;
+    return *vm.stackTop;
+}
+
+static inline Value peek(int distance)
+{
+    return vm.stackTop[-1 - distance];
+}
 
 #endif

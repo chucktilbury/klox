@@ -49,7 +49,7 @@ void emitLoop(int loopStart);
 void emitByte(uint8_t byte);
 void emitBytes(uint8_t byte1, uint8_t byte2);
 
-void markCompilerRoots();
+//void markCompilerRoots();
 Token syntheticToken(const char* text);
 
 void initCompiler(Compiler* compiler, FunctionType type);
